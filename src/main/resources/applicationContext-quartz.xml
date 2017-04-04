@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN"
+			  "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+
+
+<!--
+	- Application context definition for Petclinic on Hibernate.
+-->
+<beans>
+
+	<!--QuarzJob -->
+	<bean name="runGcJob"
+		class="org.springframework.scheduling.quartz.JobDetailBean">
+		<property name="jobClass">
+			<value>com.baidu.beidou.util.RunGc</value>
+		</property>
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="timeout">
+					<value>100000</value>
+				</entry>
+			</map>
+		</property>
+	</bean>
+
+	<bean name="loadStatCacheDatae2MemeryJob"
+		class="org.springframework.scheduling.quartz.JobDetailBean">
+		<property name="jobClass">
+			<value>com.baidu.beidou.report.util.LoadStatCacheDateJob</value>
+		</property>
+		<property name="jobDataAsMap">
+			<map>
+        		<entry key="reportCacheService">
+					<ref bean="reportCacheService" />
+				</entry>
+			</map>
+		</property>
+	</bean>
+
+	<!-- 配置触发器 -->
+	<bean id="runGcTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="runGcJob" />
+		</property>
+		<property name="cronExpression">
+			<value>0 0/10 * * * ?</value>
+		</property>
+	</bean>
+	<bean id="loadStatCacheDatae2MemeryTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+
+		<property name="jobDetail">
+			<ref bean="loadStatCacheDatae2MemeryJob" />
+		</property>
+		<!-- 每10分钟触发 -->
+		<property name="cronExpression">
+			<value>0 0/10 * * * ?</value>
+		</property>
+	</bean>
+
+	<!-- 添加触发器 -->
+	<bean
+		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<ref local="runGcTrigger" />
+				<ref bean="loadStatCacheDatae2MemeryTrigger" />
+			</list>
+		</property>
+	</bean>
+
+</beans>

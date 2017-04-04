@@ -1,0 +1,449 @@
+<project basedir="." default="report" name="localtest.xml">
+
+	<property file="./localtest.conf" />
+	
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+		<classpath>
+			 <pathelement location="${databaseinit.root}/lib/ant-contrib.jar" />
+		</classpath>
+	</taskdef>
+	
+	
+
+	<!-- Common Properties -->
+  	<property environment="env"/>
+	<property name="java.home" value="${env.JAVA_HOME}"/>
+	<property name="ant.home"  value="${env.ANT_HOME}"/> 
+	<property name="project.name" value="localtest"/>
+	<property name="project.version" value="1.0"/>
+	<property name="debug" value="on"/>
+	<property name="encoding" value="UTF-8"/>
+	
+	<!-- properties for beidou-report  -->
+	<property name="beidou-report.src.dir" value="${beidou-report.root}/src" />
+	<property name="beidou-report.libtest.dir" value="${beidou-report.root}/lib-test" />
+	<property name="beidou-report.qa.dir" value="${beidou-report.root}/qa" />
+	
+	<!-- For beidou-dbrouting -->
+	<property name="beidou-dbrouting.src.dir" value="${beidou-dbrouting.root}/src" />  
+	<property name="beidou-dbrouting.test.src.dir" value="${beidou-dbrouting.root}/test" />
+	<property name="beidou-dbrouting.ut.src.dir" value="${beidou-dbrouting.test.src.dir}/ut" />
+	
+	<!-- For beidou-core -->
+	<property name="beidou-core.src.dir" value="${beidou-core.root}/src" />  
+	<property name="beidou-core.test.src.dir" value="${beidou-core.root}/test" />
+	<property name="beidou-core.ut.src.dir" value="${beidou-core.test.src.dir}/ut" />
+	
+	<!-- Properties for Beidou-report localbuild dir-->
+	<property name="beidou-report.localbuild.dir" value="${beidou-report.root}/localbuild" />
+	<property name="beidou-report.localbuild.classes.dir" value="${beidou-report.localbuild.dir}/WEB-INF/classes" />
+	<property name="beidou-report.localbuild.lib.dir" value="${beidou-report.localbuild.dir}/WEB-INF/lib" />
+	<property name="beidou-report.localbuild.libTomcat.dir" value="${beidou-report.localbuild.dir}/WEB-INF/libTomcat" />
+	<property name="beidou-report.localbuild.dbrouting.dir" value="${beidou-report.localbuild.dir}/WEB-INF/dbrouting" />
+	<property name="beidou-report.localbuild.core.dir" value="${beidou-report.localbuild.dir}/WEB-INF/core" />
+	<property name="beidou-report.localbuild.cobertura.dir" value="${beidou-report.localbuild.dir}/WEB-INF/cobertura" />
+		 
+	<!-- Properties for RD UT Testcases -->
+	<property name="beidou-report.ut.src.dir" value="${beidou-report.root}/src2/test/java" />
+	<property name="beidou-report.ut.bin.dir" value="${beidou-report.localbuild.dir}/unittest" /> 
+			
+	<!-- Properties for report -->
+	<property name="beidou-report.report.dir" value="${beidou-report.root}/report" />
+	<property name="beidou-report.report.junit.dir" value="${beidou-report.root}/report/junit" />
+	<property name="beidou-report.report.cobertura.dir" value="${beidou-report.root}/report/cobertura" />
+	
+	<!-- Properties for cobertura -->    
+	<path id="instrument-routing.path">
+	    <pathelement location="${beidou-report.localbuild.routing.dir}" />
+		<pathelement location="${beidou-report.localbuild.lib.dir}" />
+	</path> 
+	<path id="instrument-core.path">
+		<pathelement location="${beidou-report.localbuild.core.dir}" />
+		<pathelement location="${beidou-report.localbuild.lib.dir}" />
+	</path> 
+	<path id="instrument-report.path">
+	    <pathelement location="${beidou-report.localbuild.classes.dir}" />
+		<pathelement location="${beidou-report.localbuild.lib.dir}" />
+		<pathelement location="${beidou-report.localbuild.libTomcat.dir}" />
+	</path> 
+	
+	<path id="cobertura.lib" >
+		<fileset dir="${beidou-report.qa.dir}/lib">
+			<include name="*.jar" />
+		</fileset>
+	</path>
+	
+
+
+	<!--     findbugs    -->
+	<property name="findbugs.home" value="/home/work/software/findbugs-1.3.9" />
+				
+	<path id="findbugs.path" >  
+		<fileset  dir ="${findbugs.home}">  
+			<include  name ="**/*.jar"/>  
+		</fileset>  
+	</path>  
+				
+	<taskdef classpathref="cobertura.lib" resource="tasks.properties"/>
+				
+	<taskdef name="FindBugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask"   classpathref ="findbugs.path"/>
+			
+	
+	<!--<taskdef classpathref="cobertura.lib" resource="tasks.properties"/> -->
+	
+		
+	<!-- Step 1 : Build The Beidou-dbrouting, Beidou-core And Beidou-report With RD build.xml -->
+	<target  name="compile_rd"> 
+		<if>
+		 	<equals arg1="${runRdCompile}" arg2="true" />
+			<then> 
+				<ant antfile="./build.xml" dir="${beidou-dbrouting.root}"/>
+				<ant antfile="./build.xml" dir="${beidou-core.root}"/>
+				<ant antfile="./build.xml" dir="${beidou-report.root}"/>   
+			</then>
+			<else>
+				<echo message="[RunRdCompile=False] : The Rd Compiling Process Is Turned OFF! " />
+			</else>
+		</if> 
+	</target>
+	
+	<!-- Step 2 : Initial the database, inflate the war, and do the qa replacement -->
+	<target  name="init"  depends="compile_rd"> 
+		<!-- Initialize the localbuild dir -->
+		<delete dir="${beidou-report.localbuild.dir}"/>
+		<mkdir dir="${beidou-report.localbuild.dir}"/>
+		<mkdir dir="${beidou-report.localbuild.dbrouting.dir}"/>  
+		<mkdir dir="${beidou-report.localbuild.core.dir}"/>  
+		<mkdir dir="${beidou-report.ut.bin.dir}"/> 
+		<delete dir="${beidou-report.report.dir}"/>
+		<mkdir dir="${beidou-report.report.dir}" />
+		<mkdir dir="${beidou-report.report.junit.dir}" />
+		<mkdir dir="${beidou-report.report.cobertura.dir}" />
+		
+		<!-- Database Init -->
+		<if>
+		 	<equals arg1="${runDatabaseInit}" arg2="true" />
+			<then>
+				<echo message="Run DatabseInit" />
+				<ant antfile="./dbinit.xml" dir="${databaseinit.root}"/>
+			</then>
+			<else>
+				<echo message="[RunDatabsaeInit=False] : The DatabseInit Has Been Turned Off! " />
+			</else>
+		</if> 
+		<!-- Inflating War and jar-->
+		<unzip src="${beidou-report.output.war}" dest="${beidou-report.localbuild.dir}">
+		</unzip> 
+		<unzip src="${beidou-report.localbuild.lib.dir}/beidou-core.jar" dest="${beidou-report.localbuild.core.dir}">
+		</unzip>  
+		<delete file="${beidou-report.localbuild.lib.dir}/beidou-core.jar" />
+		<unzip src="${beidou-report.localbuild.lib.dir}/beidou-dbrouting.jar" dest="${beidou-report.localbuild.dbrouting.dir}">
+		</unzip>  
+		<delete file="${beidou-report.localbuild.lib.dir}/beidou-dbrouting.jar" />
+		 
+		<!-- Replace the QA Config -->
+		<if>
+		 	<equals arg1="${replaceQaConfig}" arg2="true" />
+			<then>
+				<echo message="[replaceQaConfig=true] : Replacing Qa Config" />
+				<echo message="[doris stub]Replace doris stub to qa doris stub.now it point to 6308 " />
+												<replaceregexp           match="10.81.15.171:8808"
+											  	                         replace="127.0.0.1:8890"
+																		 file="${beidou-core.root}/test/ut/com/baidu/beidou/jdbc-mysql-thirdpart.properties"
+																		 /> 
+												<replaceregexp           match="jdbc.thirdpart.username=root"
+											  	                         replace="jdbc.thirdpart.username=beidou"
+																		 file="${beidou-core.root}/test/ut/com/baidu/beidou/jdbc-mysql-thirdpart.properties"
+																		 /> 
+												<replaceregexp           match="jdbc.thirdpart.password="
+											  	                         replace="jdbc.thirdpart.password=beidou"
+																		 file="${beidou-core.root}/test/ut/com/baidu/beidou/jdbc-mysql-thirdpart.properties"
+																		 /> 
+												<replaceregexp           match="10.81.15.171:8808"
+											  	                         replace="127.0.0.1:8890"
+																		 file="${beidou-report.root}/src2/test/java/jdbc-mysql-thirdpart.properties"
+																		 /> 
+												<replaceregexp           match="jdbc.thirdpart.username=root"
+											  	                         replace="jdbc.thirdpart.username=beidou"
+																		 file="${beidou-report.root}/src2/test/java/jdbc-mysql-thirdpart.properties"
+																		 /> 
+												<replaceregexp           match="jdbc.thirdpart.password="
+											  	                         replace="jdbc.thirdpart.password=beidou"
+																		 file="${beidou-report.root}/src2/test/java/jdbc-mysql-thirdpart.properties"
+																		 /> 
+				<!-- Do The QA Modifications for beidou-core  --> 	 
+				<!--
+				<for param="line"> 
+				  	<tokens> 
+				    	<file file="${replaceconfig.root}/beidou-dbrouting.rep" /> 
+				  	</tokens> 
+				  	<sequential> 
+				  		<var name="rep.file.path" unset="true"/>
+				  		<var name="rep.source" unset="true"/>
+				  		<var name="rep.destination" unset="true"/> 
+				    	<echo>Processing ConfigReplace For Beidou-dbrouting: @{line} </echo>
+				  	    <propertyregex property="rep.file.path" input="@{line}"  regexp="(.*)\t(.*)\t(.*)" select="\1" casesensitive="false" /> 
+				  		<propertyregex property="rep.source" input="@{line}"  regexp="(.*)\t(.*)\t(.*)" select="\2" casesensitive="false" /> 
+				  		<propertyregex property="rep.destination" input="@{line}"  regexp="(.*)\t(.*)\t(.*)" select="\3" casesensitive="false" /> 
+				  	  	<replaceregexp file="${beidou-report.localbuild.dbrouting.dir}/${rep.file.path}"
+			  	                         match="${rep.source}"
+			  	                         replace="${rep.destination}"
+			  	                         byline="true"/> 
+				  	</sequential> 
+				</for> 
+				-->
+				<for param="line"> 
+				  	<tokens> 
+				    	<file file="${replaceconfig.root}/beidou-core.rep" /> 
+				  	</tokens> 
+				  	<sequential> 
+				  		<var name="rep.file.path" unset="true"/>
+				  		<var name="rep.source" unset="true"/>
+				  		<var name="rep.destination" unset="true"/> 
+				    	<echo>Processing ConfigReplace For Beidou-core: @{line} </echo>
+				  	    <propertyregex property="rep.file.path" input="@{line}"  regexp="(.*)\t(.*)\t(.*)" select="\1" casesensitive="false" /> 
+				  		<propertyregex property="rep.source" input="@{line}"  regexp="(.*)\t(.*)\t(.*)" select="\2" casesensitive="false" /> 
+				  		<propertyregex property="rep.destination" input="@{line}"  regexp="(.*)\t(.*)\t(.*)" select="\3" casesensitive="false" /> 
+				  	  	<replaceregexp file="${beidou-report.localbuild.core.dir}/${rep.file.path}"
+			  	                         match="${rep.source}"
+			  	                         replace="${rep.destination}"
+			  	                         byline="true"/> 
+				  	</sequential> 
+				</for> 
+			 	<for param="line"> 
+				  	<tokens> 
+				    	<file file="${replaceconfig.root}/beidou-report.rep" /> 
+				  	</tokens> 
+				  	<sequential> 
+				  		<var name="rep.file.path" unset="true"/>
+				  		<var name="rep.source" unset="true"/>
+				  		<var name="rep.destination" unset="true"/> 
+				    	<echo>Processing ConfigReplace For Beidou-report: @{line} </echo>
+				  	    <propertyregex property="rep.file.path" input="@{line}"  regexp="(.*)\t(.*)\t(.*)" select="\1" casesensitive="false" /> 
+				  		<propertyregex property="rep.source" input="@{line}"  regexp="(.*)\t(.*)\t(.*)" select="\2" casesensitive="false" /> 
+				  		<propertyregex property="rep.destination" input="@{line}"  regexp="(.*)\t(.*)\t(.*)" select="\3" casesensitive="false" /> 
+				  	  	<replaceregexp file="${beidou-report.localbuild.classes.dir}/${rep.file.path}"
+			  	                         match="${rep.source}"
+			  	                         replace="${rep.destination}"
+			  	                         byline="true"/> 
+				  	</sequential> 
+				</for> 
+			</then>
+			<else>
+				<echo message="[replaceQaConfig=False] : The Config Replacing Task Has Been Turned Off! " />
+			</else>
+		</if>  
+		
+		<!-- Do the covearge Stubbing -->
+		<if>
+		 	<equals arg1="${runEMMA}" arg2="true" />
+			<then>
+				<echo message="[runEMMA=true] : Do EMMA Stubbing task" /> 
+				<!-- Stubbing the beidou-dbrouting -->
+				<delete dir="${beidou-report.localbuild.cobertura.dir}"/>
+				<mkdir dir="${beidou-report.localbuild.cobertura.dir}"/>
+				
+				<cobertura-instrument datafile="${beidou-report.report.cobertura.dir}/cobertura.ser">
+					<ignore regex="org.apache.log4j.*" />
+					<fileset dir="${beidou-report.localbuild.dbrouting.dir}">  
+						  <include name="**/report/service/**/*.class" /> 
+						  <include name="**/report/facade/**/*.class" /> 
+						  <include name="**/report/util/**/*.class" /> 
+					</fileset>
+				</cobertura-instrument>
+				
+				<!-- Stubbing the beidou-core -->
+				<delete dir="${beidou-report.localbuild.cobertura.dir}"/>
+				<mkdir dir="${beidou-report.localbuild.cobertura.dir}"/>
+				
+				<cobertura-instrument datafile="${beidou-report.report.cobertura.dir}/cobertura.ser">
+					<ignore regex="org.apache.log4j.*" />
+					<fileset dir="${beidou-report.localbuild.core.dir}">  
+						  <include name="**/report/service/**/*.class" /> 
+						  <include name="**/report/facade/**/*.class" /> 
+						  <include name="**/report/util/**/*.class" /> 
+					</fileset>
+				</cobertura-instrument>
+				
+				<!-- Stubbing the beidou-report -->
+				<delete dir="${beidou-report.localbuild.cobertura.dir}"/>
+				<mkdir dir="${beidou-report.localbuild.cobertura.dir}"/>
+				<cobertura-instrument datafile="${beidou-report.report.cobertura.dir}/cobertura.ser">
+					<ignore regex="org.apache.log4j.*" />
+					<fileset dir="${beidou-report.localbuild.classes.dir}">  
+						  <include name="**/report/service/**/*.class" /> 
+						  <include name="**/report/facade/**/*.class" /> 
+						  <include name="**/report/util/**/*.class" /> 
+					</fileset>
+				</cobertura-instrument>
+			</then>
+			<else>
+				<echo message="[runEMMA=False] : The EMMA coverage has been turned Off! " />
+			</else>
+		</if> 
+	</target>
+	
+	
+	
+	
+	<!-- Step3: Build and Run the UT Case --> 
+	<target depends="init" name="runRdCase"> 
+		<if>
+		 	<equals arg1="${runRdCase}" arg2="true" />
+			<then>
+				<echo message="[runRdCase=true] : Compile And Run Unit Test Cases" /> 
+				<!-- compile the UT Test Code --> 
+				<javac destdir="${beidou-report.ut.bin.dir}" deprecation="true" encoding="${encoding}" debug="${debug}">
+					<src path="${beidou-report.ut.src.dir}" />
+					<classpath>
+						<pathelement location="${beidou-report.localbuild.dbrouting.dir}" />
+						<pathelement location="${beidou-report.localbuild.core.dir}" />
+						<pathelement location="${beidou-report.localbuild.classes.dir}" />
+						<fileset dir="${beidou-report.localbuild.lib.dir}">
+							<include name="**/*.jar" />
+						</fileset>
+						<fileset dir="${beidou-report.localbuild.libTomcat.dir}">
+							<include name="**/*.jar" />
+						</fileset>
+						<fileset dir="${beidou-report.libtest.dir}">
+													<include name="**/*.jar" />
+						</fileset>
+						<fileset dir="${beidou-report.qa.dir}/lib">
+							<include name="cobertura.jar" />
+						</fileset>
+					</classpath>
+				</javac> 
+				
+				<javac destdir="${beidou-report.ut.bin.dir}" deprecation="true" encoding="${encoding}" debug="${debug}">
+					<src path="${beidou-core.test.src.dir}" />
+					<include name="ut/**/*Test.java*"/>
+					<classpath>
+						<pathelement location="${beidou-report.localbuild.dbrouting.dir}" />
+						<pathelement location="${beidou-report.localbuild.core.dir}" />
+						<pathelement location="${beidou-report.localbuild.classes.dir}" />
+						<fileset dir="${beidou-report.localbuild.lib.dir}">
+							<include name="**/*.jar" />
+						</fileset>
+						<fileset dir="${beidou-report.localbuild.libTomcat.dir}">
+							<include name="**/*.jar" />
+						</fileset>
+						<fileset dir="${beidou-report.libtest.dir}">
+													<include name="**/*.jar" />
+						</fileset>
+						<fileset dir="${beidou-report.qa.dir}/lib">
+							<include name="cobertura.jar" />
+						</fileset>
+					</classpath>
+				</javac>  
+				
+				<copy overwrite="true" todir="${beidou-report.ut.bin.dir}">
+					<fileset dir="${beidou-report.ut.src.dir}" />
+				</copy>
+				<copy overwrite="true" todir="${beidou-report.ut.bin.dir}/ut">
+					<fileset dir="${beidou-core.ut.src.dir}" /> 
+				</copy>
+				
+				<!-- run ut case -->
+				<junit printsummary="yes" haltonerror="no" haltonfailure="no" fork="yes">  
+					
+					<sysproperty key="net.sourceforge.cobertura.datafile"  file="${beidou-report.report.cobertura.dir}/cobertura.ser" />
+
+					<formatter type="plain" usefile="false" />
+					<formatter type="xml" />
+					<batchtest todir="${beidou-report.report.junit.dir}">
+						<fileset dir="${beidou-report.ut.bin.dir}">
+							<include name="**/*Test.java" /> 
+						</fileset>
+					</batchtest>
+					<classpath>
+						<pathelement location="${beidou-report.ut.bin.dir}" />
+						<pathelement location="${beidou-report.localbuild.core.dir}" />
+						<pathelement location="${beidou-report.localbuild.dbrouting.dir}" />
+						<pathelement location="${beidou-report.localbuild.classes.dir}" />
+						<fileset dir="${beidou-report.libtest.dir}">
+							<include name="**/*.jar" />
+						</fileset>
+						<fileset dir="${beidou-report.localbuild.lib.dir}">
+							<include name="**/*.jar" />
+						</fileset>
+						<fileset dir="${beidou-report.localbuild.libTomcat.dir}">
+							<include name="**/*.jar" />
+						</fileset>
+					</classpath>
+					<classpath refid="cobertura.lib" />
+				</junit> 
+			</then>
+			<else>
+				<echo message="[runRdCase=False] : Unit Testcases has been turned Off! " />
+			</else>
+		</if> 
+	</target>
+	 
+	<!--copy src class文件 -->
+	<target name="cp_classes" depends="runRdCase">
+		<mkdir dir="${beidou-report.root}/classes_to_find" />
+			<copy todir="${beidou-report.root}/classes_to_find">
+				<fileset dir="${beidou-report.localbuild.classes.dir}">
+			    </fileset>
+			</copy>
+	</target>
+							
+	<target name="FindBugs" depends="cp_classes">
+		<FindBugs home="${findbugs.home}" output="xml" outputFile="findbugs.xml"> 
+				<class location="${beidou-report.localbuild.classes.dir}" /> 
+		</FindBugs> 
+	</target>	
+	
+	<!-- generate the report for test result  -->
+	<target name="report" depends="FindBugs">
+		<!-- generate html junit report --> 
+		<junitreport todir="${beidou-report.report.junit.dir}">
+			<fileset dir="${beidou-report.report.junit.dir}">
+				<include name="TEST-*.xml" />
+			</fileset>
+			<report todir="${beidou-report.report.junit.dir}" />
+		</junitreport>
+		
+		<!-- generate EMMA result -->
+		<if>
+		 	<equals arg1="${runEMMA}" arg2="true" />
+			<then>
+				<echo message="[runEMMA=True] : Generate the cobertura report! " />
+				
+
+				<mkdir dir="${beidou-report.report.cobertura.dir}/html" />
+				<cobertura-report format="html" destdir="${beidou-report.report.cobertura.dir}/html" 
+							datafile="${beidou-report.report.cobertura.dir}/cobertura.ser">
+				    <fileset dir="${beidou-core.src.dir}">
+				        <include name="**/*.java" />
+				    </fileset>
+					<fileset dir="${beidou-dbrouting.src.dir}">
+				        <include name="**/*.java" />
+				    </fileset>
+					<fileset dir="${beidou-report.src.dir}">
+				        <include name="**/*.java" />
+				    </fileset>
+				</cobertura-report>
+				
+				<cobertura-report format="xml" destdir="${beidou-report.report.cobertura.dir}" 
+							datafile="${beidou-report.report.cobertura.dir}/cobertura.ser">
+				    <fileset dir="${beidou-core.src.dir}">
+				        <include name="**/*.java" />
+				    </fileset>
+					<fileset dir="${beidou-dbrouting.src.dir}">
+				        <include name="**/*.java" />
+				    </fileset>
+					<fileset dir="${beidou-report.src.dir}">
+				        <include name="**/*.java" />
+				    </fileset>
+				</cobertura-report>
+				
+			</then>
+			<else>
+				<echo message="[runEMMA=False] : Emma report has been turned Off! " />
+			</else>
+		</if> 
+		
+		
+	</target> 
+</project>

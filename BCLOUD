@@ -1,0 +1,1 @@
+BUILD_SUBMITTER  -x -u . -c "alias mvn='mvn -U' && cd app/ecom/cpweb/beidou-report && sh -ex build.sh" -m aapp/ecom/cpweb/beidou-report

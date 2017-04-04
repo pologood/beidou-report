@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+   http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+   http://www.springframework.org/schema/context
+   http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+	
+	<bean name="/loadSite"
+		class="org.springframework.remoting.caucho.HessianServiceExporter">
+		<property name="service" ref="loadSiteCTTask" />
+		<property name="serviceInterface"
+			value="com.baidu.ctclient.ITaskUsingErrorCode" />
+	</bean>
+	
+	<!-- added by zhangxu 小流量实验初始化 -->
+	<bean name="/loadExpConf"
+		class="org.springframework.remoting.caucho.HessianServiceExporter">
+		<property name="service" ref="loadExpConfCTTask" />
+		<property name="serviceInterface"
+			value="com.baidu.ctclient.ITaskUsingErrorCode" />
+	</bean>	
+	
+	<!-- added by tianxin@3.0 刷IT兴趣点的缓存 -->
+	<bean name="/reloadInterestCache"
+		class="org.springframework.remoting.caucho.HessianServiceExporter">
+		<property name="service" ref="reloadInterestCacheTask" />
+		<property name="serviceInterface"
+			value="com.baidu.ctclient.ITaskUsingErrorCode" />
+	</bean>
+	
+	<!-- added by genglei@3.x 刷新UV占比统计数据的缓存 -->
+	<bean name="/reloadUvStatCache"
+		class="org.springframework.remoting.caucho.HessianServiceExporter">
+		<property name="service" ref="reloadUvStatCacheTask" />
+		<property name="serviceInterface"
+			value="com.baidu.ctclient.ITaskUsingErrorCode" />
+	</bean>
+	
+	<!-- added by wangxiaokun 刷IT兴趣点的统计数据缓存 -->
+	<bean name="/reloadInterestStat"
+		class="org.springframework.remoting.caucho.HessianServiceExporter">
+		<property name="service" ref="reloadInterestStatTask" />
+		<property name="serviceInterface"
+			value="com.baidu.ctclient.ITaskUsingErrorCode" />
+	</bean>	
+	
+	<!-- added by wangxiaokun 刷IT推荐兴趣的缓存 -->
+	<bean name="/loadInterestRecommend"
+		class="org.springframework.remoting.caucho.HessianServiceExporter">
+		<property name="service" ref="reloadInterestRecommendTask" />
+		<property name="serviceInterface"
+			value="com.baidu.ctclient.ITaskUsingErrorCode" />
+	</bean>	
+	
+	<!-- added by wangchongjie 刷App移动应用的缓存 -->
+	<bean name="/reloadAppInfo"
+		class="org.springframework.remoting.caucho.HessianServiceExporter">
+		<property name="service" ref="reloadAppInfoTask" />
+		<property name="serviceInterface"
+			value="com.baidu.ctclient.ITaskUsingErrorCode" />
+	</bean>	
+	
+	<!-- added by wangchongjie 刷Tc非联盟站点的缓存 -->
+	<bean name="/reloadTcSiteInfo"
+		class="org.springframework.remoting.caucho.HessianServiceExporter">
+		<property name="service" ref="reloadTcSiteInfoTask" />
+		<property name="serviceInterface"
+			value="com.baidu.ctclient.ITaskUsingErrorCode" />
+	</bean>	
+	
+</beans>

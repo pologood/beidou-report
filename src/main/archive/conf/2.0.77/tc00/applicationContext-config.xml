@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN"
+			  "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+
+
+<!--
+	- Application context definition for Petclinic on Hibernate.
+-->
+<beans>
+	
+	<import resource="classpath:/com/baidu/beidou/report/applicationContext-config.xml" />
+	
+	<bean class="com.baidu.beidou.util.BeidouConfig">
+		<property name="akaServier">
+			<value>${AKA_SERVER}</value>
+		</property>
+		<property name="AKA_LITERAL_CLIENT">
+			<value>${AKA_LITERAL_CLIENT}</value>
+		</property>
+		<property name="AKA_PICTURE_CLIENT">
+			<value>${AKA_PICTURE_CLIENT}</value>
+		</property>
+		<property name="AKA_KW_CLIENT">
+			<value>${AKA_KW_CLIENT}</value>
+		</property>
+		<property name="AKA_LIST_TYPE">
+			<value>${AKA_LIST_TYPE}</value>
+		</property>
+		<property name="atomServerSlave">
+			<value>${ATOM_SERVER_SLAVE}</value>
+		</property>
+		<property name="atomServerMaster">
+			<value>${ATOM_SERVER_MASTER}</value>
+		</property>
+		<property name="fcApiUrl">
+			<value>${FC_API_URL}</value>
+		</property>
+		<property name="MASTER_CACHE_SERVER">
+			<value>${MASTER_CACHE_SERVER}</value>
+		</property>
+		<property name="SLAVE_CACHE_SERVER">
+			<value>${SLAVE_CACHE_SERVER}</value>
+		</property>
+		<!-- cache读写超时,单位为秒 -->
+		<property name="CACHE_OPERATION_TIMEOUT">
+			<value>1</value>
+		</property>
+		<!-- cache数据缓冲的大小,单位为字节 -->
+		<property name="CACHE_READ_BUFFER_SIZE">
+			<value>16384</value>
+		</property>
+		<!-- cache队列长度 -->
+		<property name="CACHE_OP_QUEUE_LEN">
+			<value>16384</value>
+		</property>
+		<!-- cache中value的最大值 -->
+		<property name="CACHE_MAX_VALUE_SIZE">
+			<value>1000000</value>
+		</property>
+		<property name="UC_POST_APPID">
+			<value>${UC_POST_APPID}</value>
+		</property>
+		<property name="UC_BEIDOU_GROUPTYPE">
+			<value>${UC_BEIDOU_GROUPTYPE}</value>
+		</property>
+		<property name="logMailFrom" value="${LOG_MAILFROM}"/>
+		<property name="logMailTo" value="${LOG_MAILTO}"/>
+		<property name="UC_SHIFEN_GROUPTYPE">
+			<value>${UC_SHIFEN_GROUPTYPE}</value>
+		</property>
+		<property name="UC_SHIFEN_GETLEADER_GROUPTYPE">
+			<value>${UC_SHIFEN_GETLEADER_GROUPTYPE}</value>
+		</property>
+		<property name="MCC_APPID">
+			<value>${MCC_APPID}</value>
+		</property>
+	</bean>
+	
+</beans>

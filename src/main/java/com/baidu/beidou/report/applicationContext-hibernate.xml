@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN"
+			  "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+
+
+<!--
+	- Application context definition for Petclinic on Hibernate.
+-->
+<beans>
+	<!-- 查询beidoureport库 -->
+	<bean id="reportCacheDao" 
+		class="com.baidu.beidou.report.dao.impl.ReportCacheDaoImpl" 
+		parent="xdbBaseDaoSupport" />
+	
+	
+	<bean id="dorisDao" 
+		class="com.baidu.beidou.report.dao.impl.DorisDaoImpl" />
+	
+	
+	
+	<bean id="unitPartitionStrategy"
+		class="com.baidu.beidou.util.partition.strategy.impl.HashPartitionStrategy">
+		<constructor-arg index="0" value="cprounitstate" />
+		<constructor-arg index="1" value="com.baidu.beidou.cprounit.bo.Unit" />
+		<constructor-arg index="2" value="8"></constructor-arg>
+		<constructor-arg index="3" value="2000000"></constructor-arg>
+	</bean>
+
+	<!-- 查询beidou库 -->
+	<bean id="reportCproPlanDao" 
+		class="com.baidu.beidou.report.dao.impl.ReportCproPlanDaoImpl" 
+		parent="addbBaseDaoSupport" >
+		<property name="strategy">
+			<ref bean="unitPartitionStrategy" />
+		</property>
+	</bean>
+	
+	<bean id="reportCproGroupDao" 
+		class="com.baidu.beidou.report.dao.impl.ReportCproGroupDaoImpl" 
+		parent="addbBaseDaoSupport" />
+	
+	<bean id="reportCproUnitDao" 
+		class="com.baidu.beidou.report.dao.impl.ReportCproUnitDaoImpl" 
+		parent="addbBaseDaoSupport" >
+		<property name="strategy">
+			<ref bean="unitPartitionStrategy" />
+		</property>
+	</bean>
+
+</beans>

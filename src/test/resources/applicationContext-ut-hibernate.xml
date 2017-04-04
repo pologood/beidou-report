@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN"
+			  "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+
+
+<!--
+	- Application context definition for Petclinic on Hibernate.
+-->
+<beans>
+
+	<bean id="utPropertyConfigurerCore"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="ignoreUnresolvablePlaceholders" value="true"/>
+		<property name="order" value="112" />  
+		<property name="locations">
+			<list>
+				<value>classpath*:jdbc-mysql-thirdpart.properties</value>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="thirdpartDao" class="com.baidu.beidou.util.dao.BaseDaoSupport">
+		<property name="jdbcTemplate" ref="thirdpartJdbcTemplate" />
+	</bean>
+	
+	<bean id="thirdpartJdbcTemplate"
+		class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource" ref="thirdpartDataSource" />
+	</bean>
+
+	<bean id="thirdpartDataSource"
+		class="com.mchange.v2.c3p0.ComboPooledDataSource"
+		destroy-method="close">
+		<property name="driverClass">
+			<value>${jdbc.thirdpart.driverClassName}</value>
+		</property>
+		<property name="jdbcUrl">
+			<value>${jdbc.thirdpart.url}</value>
+		</property>
+		<property name="user">
+			<value>${jdbc.thirdpart.username}</value>
+		</property>
+		<property name="password">
+			<value>${jdbc.thirdpart.password}</value>
+		</property>
+		<property name="initialPoolSize">
+			<value>${jdbc.thirdpart.initialPoolSize}</value>
+		</property>
+		<property name="maxPoolSize">
+			<value>${jdbc.thirdpart.maxPoolSize}</value>
+		</property>
+		<property name="minPoolSize">
+			<value>${jdbc.thirdpart.minPoolSize}</value>
+		</property>
+		<property name="idleConnectionTestPeriod">
+			<value>${jdbc.thirdpart.idleConnectionTestPeriod}</value>
+		</property>
+		<property name="maxIdleTime">
+			<value>${jdbc.thirdpart.maxIdleTime}</value>
+		</property>
+	</bean>
+</beans>

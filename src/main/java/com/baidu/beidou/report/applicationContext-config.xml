@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN"
+			  "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+
+
+<!--
+	- Application context definition for Petclinic on Hibernate.
+-->
+<beans>
+	
+	<bean class="com.baidu.beidou.report.constant.ReportWebConstants">
+		<property name="FRONT_SORT_THRESHOLD" 
+			value="${ReportWebConstants.FRONT_SORT_THRESHOLD}" />
+		
+		<property name="MAX_GROUP_COUNT_IN_SITEVIEW" 
+			value="${ReportWebConstants.MAX_GROUP_COUNT_IN_SITEVIEW}" />
+		
+		<property name="showSecondDomainSiteList" 
+			value="${ReportWebConstants.showSecondDomainSiteList}" />
+		
+	</bean>
+</beans>

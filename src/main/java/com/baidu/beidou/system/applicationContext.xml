@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+
+<!--
+	- Application context definition for "springapp" DispatcherServlet.
+-->
+
+<beans>
+	<!-- CT task -->
+	
+	<bean id="loadExpConfCTTask"
+		class="com.baidu.beidou.system.task.LoadExpConfCTTask">
+		<property name="experimentConstantMgr">
+            <ref bean="experimentConstantMgr" />
+        </property>
+	</bean>
+	
+	<!-- 小流量实验配置 -->
+	<bean id="experimentConstantDao" class="com.baidu.beidou.system.dao.impl.ExperimentConstantDaoImpl">
+	</bean>
+	
+	<bean id="experimentConstantMgr" class="com.baidu.beidou.system.service.impl.ExperimentConstantMgrImpl">
+        <property name="usergroupListIndexFile">
+            <!-- ad link page snapshot saved at the below path, the path should be a absolute path under app base path,like /home/work/wm123-web/previewshot -->
+            <value>${exp.usergroup_list_index_file}</value>
+        </property>
+        <property name="forbiddenUriPrefixs">
+            <!-- ad link page snapshot saved at the below path, the path should be a absolute path under app base path,like /home/work/wm123-web/previewshot -->
+            <value>${exp.forbidden_uri_prefixs}</value>
+        </property>
+        <property name="ignoreIfExpUriPrefixs">
+            <!-- ad link page snapshot saved at the below path, the path should be a absolute path under app base path,like /home/work/wm123-web/previewshot -->
+            <value>${exp.ignore_if_exp_uri_prefixs}</value>
+        </property>
+        <property name="ifexpRedirectWhenUriNotHaveUserid">
+            <!-- ad link page snapshot saved at the below path, the path should be a absolute path under app base path,like /home/work/wm123-web/previewshot -->
+            <value>${exp.if_exp_redirect_when_uri_not_have_userid}</value>
+        </property>
+        <property name="experimentConstantDao">
+            <ref bean="experimentConstantDao" />
+        </property>
+    </bean>
+	
+</beans>

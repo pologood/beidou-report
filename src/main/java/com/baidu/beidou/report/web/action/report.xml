@@ -1,0 +1,2243 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+        "http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+	<package name="report" namespace="/report" extends="beidou-default">	
+		<interceptors>
+			<interceptor-stack name="reportStack">
+				<interceptor-ref name="beidouStack">
+					<param name="loginValidator.jsonEnabled">true</param>
+					<param name="jsonWorkflow.enabled">true</param>
+					<param name="privilegeWorkflow.jsonEnabled">true</param>
+					<param name="operatePrivilegeValidator.privilege">Beidou_Stat</param>
+				</interceptor-ref>
+			</interceptor-stack>
+			<interceptor name="reportPrivilegeInterceptor" class="com.baidu.beidou.report.web.interceptor.ReportListPrivilegeInterceptor" />
+			<interceptor name="reportParamDigestInterceptor" class="com.baidu.beidou.report.web.interceptor.ReportParamDigestInterceptor" />
+			<interceptor name="downloadExceptionHandler" class="com.baidu.beidou.report.web.interceptor.DownloadReportExceptionHandlerInterceptor" />
+			<interceptor name="reportFlashExceptionHandler" class="com.baidu.beidou.report.web.interceptor.ReportFlashExceptionHandlerInterceptor" />
+			<interceptor name="reportTimeConsumeInterceptor" class="com.baidu.beidou.report.web.interceptor.ReportTimeConsumeInterceptor" />
+			
+		</interceptors>
+		
+		<default-interceptor-ref name="reportStack"></default-interceptor-ref>	
+		<!-- CustomReport -->
+		<action name="invalidCostList" class="invalidCostReportAction" method="ajaxList">
+			<interceptor-ref name="reportStack" />
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+						
+			<result name="success" type="json">
+  				<param name="root">jsonObject</param>
+			</result>
+			<result name="error">/report/error.json</result>
+		</action>
+		<action name="downloadInvalidCostReport" class="invalidCostReportAction" method="downloadReport">
+            <interceptor-ref name="reportParamDigestInterceptor" />
+            <interceptor-ref name="reportStack">
+                <param name="loginValidator.jsonEnabled">false</param>
+                <param name="jsonWorkflow.enabled">false</param>
+                <param name="privilegeWorkflow.jsonEnabled">false</param>
+            </interceptor-ref>
+            <interceptor-ref name="reportPrivilegeInterceptor" />
+            <interceptor-ref name="dataPrivilegeStack" />
+            <interceptor-ref name="downloadExceptionHandler" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+            
+			<result name="success" type="stream">
+                <param name="inputName">inputStream</param>
+                <param name="contentType">
+                    application/vnd.ms-excel
+                </param>
+                <param name="contentDisposition">
+                    attachment;filename="${fileName}"
+                </param>
+                <param name="contentLength">${fileSize}</param>
+                <param name="bufferSize">1024</param>   
+            </result>
+            <result name="error" type="ctResult" >
+                <param name="contentParameter">content</param>
+                <param name="contentType">text/html</param>
+            </result>
+            <result name="input" type="ctResult" >
+                <param name="contentParameter">content</param>
+                <param name="contentType">text/html</param>
+            </result>
+        </action>
+		
+		<action name="accountCustomList" class="userAccountCustomReportAction" method="ajaxList">
+			<interceptor-ref name="reportStack" />
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+						
+			<result name="success" type="json">
+  				<param name="root">jsonObject</param>
+			</result>
+			<result name="error">/report/error.json</result>
+		</action>
+		<action name="downloadAccountCustomReport" class="userAccountCustomReportAction" method="downloadReport">
+            <interceptor-ref name="reportParamDigestInterceptor" />
+            <interceptor-ref name="reportStack">
+                <param name="loginValidator.jsonEnabled">false</param>
+                <param name="jsonWorkflow.enabled">false</param>
+                <param name="privilegeWorkflow.jsonEnabled">false</param>
+            </interceptor-ref>
+            <interceptor-ref name="reportPrivilegeInterceptor" />
+            <interceptor-ref name="dataPrivilegeStack" />
+            <interceptor-ref name="downloadExceptionHandler" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+            
+			<result name="success" type="stream">
+                <param name="inputName">inputStream</param>
+                <param name="contentType">
+                    application/vnd.ms-excel
+                </param>
+                <param name="contentDisposition">
+                    attachment;filename="${fileName}"
+                </param>
+                <param name="contentLength">${fileSize}</param>
+                <param name="bufferSize">1024</param>   
+            </result>
+            <result name="error" type="ctResult" >
+                <param name="contentParameter">content</param>
+                <param name="contentType">text/html</param>
+            </result>
+            <result name="input" type="ctResult" >
+                <param name="contentParameter">content</param>
+                <param name="contentType">text/html</param>
+            </result>
+        </action>
+        
+        <action name="planCustomList" class="planCustomReportAction" method="ajaxList">
+			<interceptor-ref name="reportStack" />
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+						
+			<result name="success" type="json">
+  				<param name="root">jsonObject</param>
+			</result>
+			<result name="error">/report/error.json</result>
+		</action>
+		<action name="downloadPlanCustomReport" class="planCustomReportAction" method="downloadReport">
+            <interceptor-ref name="reportParamDigestInterceptor" />
+            <interceptor-ref name="reportStack">
+                <param name="loginValidator.jsonEnabled">false</param>
+                <param name="jsonWorkflow.enabled">false</param>
+                <param name="privilegeWorkflow.jsonEnabled">false</param>
+            </interceptor-ref>
+            <interceptor-ref name="reportPrivilegeInterceptor" />
+            <interceptor-ref name="dataPrivilegeStack" />
+            <interceptor-ref name="downloadExceptionHandler" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+            
+			<result name="success" type="stream">
+                <param name="inputName">inputStream</param>
+                <param name="contentType">
+                    application/vnd.ms-excel
+                </param>
+                <param name="contentDisposition">
+                    attachment;filename="${fileName}"
+                </param>
+                <param name="contentLength">${fileSize}</param>
+                <param name="bufferSize">1024</param>   
+            </result>
+            <result name="error" type="ctResult" >
+                <param name="contentParameter">content</param>
+                <param name="contentType">text/html</param>
+            </result>
+            <result name="input" type="ctResult" >
+                <param name="contentParameter">content</param>
+                <param name="contentType">text/html</param>
+            </result>
+        </action>
+        
+        <action name="groupCustomList" class="groupCustomReportAction" method="ajaxList">
+			<interceptor-ref name="reportStack" />
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+						
+			<result name="success" type="json">
+  				<param name="root">jsonObject</param>
+			</result>
+			<result name="error">/report/error.json</result>
+		</action>
+		<action name="downloadGroupCustomReport" class="groupCustomReportAction" method="downloadReport">
+            <interceptor-ref name="reportParamDigestInterceptor" />
+            <interceptor-ref name="reportStack">
+                <param name="loginValidator.jsonEnabled">false</param>
+                <param name="jsonWorkflow.enabled">false</param>
+                <param name="privilegeWorkflow.jsonEnabled">false</param>
+            </interceptor-ref>
+            <interceptor-ref name="reportPrivilegeInterceptor" />
+            <interceptor-ref name="dataPrivilegeStack" />
+            <interceptor-ref name="downloadExceptionHandler" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+            
+			<result name="success" type="stream">
+                <param name="inputName">inputStream</param>
+                <param name="contentType">
+                    application/vnd.ms-excel
+                </param>
+                <param name="contentDisposition">
+                    attachment;filename="${fileName}"
+                </param>
+                <param name="contentLength">${fileSize}</param>
+                <param name="bufferSize">1024</param>   
+            </result>
+            <result name="error" type="ctResult" >
+                <param name="contentParameter">content</param>
+                <param name="contentType">text/html</param>
+            </result>
+            <result name="input" type="ctResult" >
+                <param name="contentParameter">content</param>
+                <param name="contentType">text/html</param>
+            </result>
+        </action>
+        		<!-- add by wangchongjie for cpweb550 -->
+        <action name="unitCustomList" class="unitCustomReportAction" method="ajaxList">
+			<interceptor-ref name="reportStack" />
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+                        
+            <result name="success" type="json">
+                <param name="root">jsonObject</param>
+            </result>
+            <result name="error">/report/error.json</result>
+        </action>
+        
+        <action name="downloadUnitCustomList" class="unitCustomReportAction" method="download">
+			<interceptor-ref name="reportParamDigestInterceptor" />
+            <interceptor-ref name="reportStack">
+                <param name="loginValidator.jsonEnabled">false</param>
+                <param name="jsonWorkflow.enabled">false</param>
+                <param name="privilegeWorkflow.jsonEnabled">false</param>
+            </interceptor-ref>
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="downloadExceptionHandler" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+			
+            <result name="success" type="stream">
+                <param name="inputName">inputStream</param>
+                <param name="contentType">
+                    application/vnd.ms-excel
+                </param>
+                <param name="contentDisposition">
+                    attachment;filename="${fileName}"
+                </param>
+                <param name="contentLength">${fileSize}</param>
+                <param name="bufferSize">1024</param>   
+            </result>
+            <result name="error" type="ctResult" >
+                <param name="contentParameter">content</param>
+                <param name="contentType">text/html</param>
+            </result>
+            <result name="input" type="ctResult" >
+                <param name="contentParameter">content</param>
+                <param name="contentType">text/html</param>
+            </result>
+        </action>
+        
+        <action name="downloadStandardCustomList" class="standardCustomReportAction" method="download">
+			<interceptor-ref name="reportParamDigestInterceptor" />
+            <interceptor-ref name="reportStack">
+                <param name="loginValidator.jsonEnabled">false</param>
+                <param name="jsonWorkflow.enabled">false</param>
+                <param name="privilegeWorkflow.jsonEnabled">false</param>
+            </interceptor-ref>
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="downloadExceptionHandler" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+			
+            <result name="success" type="stream">
+                <param name="inputName">inputStream</param>
+                <param name="contentType">
+                    application/vnd.ms-excel
+                </param>
+                <param name="contentDisposition">
+                    attachment;filename="${fileName}"
+                </param>
+                <param name="contentLength">${fileSize}</param>
+                <param name="bufferSize">1024</param>   
+            </result>
+            <result name="error" type="ctResult" >
+                <param name="contentParameter">content</param>
+                <param name="contentType">text/html</param>
+            </result>
+            <result name="input" type="ctResult" >
+                <param name="contentParameter">content</param>
+                <param name="contentType">text/html</param>
+            </result>
+        </action>
+		<!-- END -->
+		<!-- PLAN -->
+		<action name="planList" class="listPlanAction" method="ajaxList">
+			<interceptor-ref name="reportStack" />
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+						
+			<result name="success" type="json">
+  				<param name="root">jsonObject</param>
+			</result>
+			<result name="error">/report/error.json</result>
+		</action>
+        <!--
+        <action name="planListByDay" class="listPlanAction" method="ajaxListByDay">
+            <interceptor-ref name="reportStack" />
+            <interceptor-ref name="reportPrivilegeInterceptor" />
+            <interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+                        
+            <result name="success" type="json">
+                <param name="root">jsonObject</param>
+            </result>
+            <result name="error">/report/error.json</result>
+        </action>
+		-->	
+		<action name="planSum" class="listPlanAction" method="ajaxFlashXml">
+			<interceptor-ref name="reportStack" />
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportFlashExceptionHandler" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+			
+			<!--<result name="success" type="ctResult">
+				<param name="contentParameter">content</param>
+				<param name="contentType">text/plain</param>
+			</result>-->
+			<result name="success" type="json">
+  				<param name="root">jsonObject</param>
+			</result>
+		</action>
+		
+		<!-- 推广首页增加用户层级的分日图表action -->	
+		<action name="userSum" class="listPlanAction" method="ajaxFlashXmlForUser">
+			<interceptor-ref name="reportStack" />
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportFlashExceptionHandler" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+			
+			<!--<result name="success" type="ctResult">
+				<param name="contentParameter">content</param>
+				<param name="contentType">text/plain</param>
+			</result>-->
+			<result name="success" type="json">
+  				<param name="root">jsonObject</param>
+			</result>
+		</action>
+		
+		<action name="downloadPlanList" class="listPlanAction" method="download">
+			<interceptor-ref name="reportParamDigestInterceptor" />
+			<interceptor-ref name="reportStack">
+				<param name="loginValidator.jsonEnabled">false</param>
+				<param name="jsonWorkflow.enabled">false</param>
+				<param name="privilegeWorkflow.jsonEnabled">false</param>
+			</interceptor-ref>
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="downloadExceptionHandler" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+			
+			<result name="success" type="stream">
+				<param name="inputName">inputStream</param>
+				<param name="contentType">
+					application/vnd.ms-excel
+				</param>
+				<param name="contentDisposition">
+					attachment;filename="${fileName}"
+				</param>
+				<param name="contentLength">${fileSize}</param>
+				<param name="bufferSize">1024</param>	
+			</result>
+			<result name="error" type="ctResult" >
+				<param name="contentParameter">content</param>
+				<param name="contentType">text/html</param>
+			</result>
+			<result name="input" type="ctResult" >
+				<param name="contentParameter">content</param>
+				<param name="contentType">text/html</param>
+			</result>
+		</action>
+        <!--
+        <action name="downloadPlanListByDay" class="listPlanAction" method="downloadByDay">
+            <interceptor-ref name="reportParamDigestInterceptor" />
+            <interceptor-ref name="reportStack">
+                <param name="loginValidator.jsonEnabled">false</param>
+                <param name="jsonWorkflow.enabled">false</param>
+                <param name="privilegeWorkflow.jsonEnabled">false</param>
+            </interceptor-ref>
+            <interceptor-ref name="reportPrivilegeInterceptor" />
+            <interceptor-ref name="dataPrivilegeStack" />
+            <interceptor-ref name="downloadExceptionHandler" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+            
+			<result name="success" type="stream">
+                <param name="inputName">inputStream</param>
+                <param name="contentType">
+                    application/vnd.ms-excel
+                </param>
+                <param name="contentDisposition">
+                    attachment;filename="${fileName}"
+                </param>
+                <param name="contentLength">${fileSize}</param>
+                <param name="bufferSize">1024</param>   
+            </result>
+            <result name="error" type="ctResult" >
+                <param name="contentParameter">content</param>
+                <param name="contentType">text/html</param>
+            </result>
+            <result name="input" type="ctResult" >
+                <param name="contentParameter">content</param>
+                <param name="contentType">text/html</param>
+            </result>
+        </action>
+        -->
+        <!-- start: add by kanghongwei since 星二期第二批 -->
+        <action name="userDataList" class="listPlanAction" method="userDataList">
+			<interceptor-ref name="reportStack" />
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+						
+			<result name="success" type="json">
+  				<param name="root">jsonObject</param>
+			</result>
+			<result name="error">/report/error.json</result>
+		</action>
+		
+		<action name="downloadUserDataList" class="listPlanAction" method="downloadUserDataList">
+            <interceptor-ref name="reportParamDigestInterceptor" />
+            <interceptor-ref name="reportStack">
+                <param name="loginValidator.jsonEnabled">false</param>
+                <param name="jsonWorkflow.enabled">false</param>
+                <param name="privilegeWorkflow.jsonEnabled">false</param>
+            </interceptor-ref>
+            <interceptor-ref name="reportPrivilegeInterceptor" />
+            <interceptor-ref name="dataPrivilegeStack" />
+            <interceptor-ref name="downloadExceptionHandler" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+            
+			<result name="success" type="stream">
+                <param name="inputName">inputStream</param>
+                <param name="contentType">
+                    application/vnd.ms-excel
+                </param>
+                <param name="contentDisposition">
+                    attachment;filename="${fileName}"
+                </param>
+                <param name="contentLength">${fileSize}</param>
+                <param name="bufferSize">1024</param>   
+            </result>
+            <result name="error" type="ctResult" >
+                <param name="contentParameter">content</param>
+                <param name="contentType">text/html</param>
+            </result>
+            <result name="input" type="ctResult" >
+                <param name="contentParameter">content</param>
+                <param name="contentType">text/html</param>
+            </result>
+        </action>
+		<!-- end: add by kanghongwei since 星二期第二批 -->
+		
+		<!-- GROUP -->
+		<action name="groupList" class="listGroupAction" method="ajaxList">
+			<interceptor-ref name="reportStack" />
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+						
+			<result name="success" type="json">
+  				<param name="root">jsonObject</param>
+			</result>
+			<result name="error">/report/error.json</result>
+		</action>
+        <!-- 
+        <action name="groupListByDay" class="listGroupAction" method="ajaxListByDay">
+            <interceptor-ref name="reportStack" />
+            <interceptor-ref name="reportPrivilegeInterceptor" />
+            <interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+                        
+            <result name="success" type="json">
+                <param name="root">jsonObject</param>
+            </result>
+            <result name="error">/report/error.json</result>
+        </action>
+		-->	
+		<action name="groupSum" class="listGroupAction" method="ajaxFlashXml">
+			<interceptor-ref name="reportStack" />
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportFlashExceptionHandler" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+			<!--<result name="success" type="ctResult">
+				<param name="contentParameter">content</param>
+				<param name="contentType">text/plain</param>
+			</result>-->
+			<result name="success" type="json">
+  				<param name="root">jsonObject</param>
+			</result>
+		</action>
+			
+		<action name="downloadGroupList" class="listGroupAction" method="download">
+			<interceptor-ref name="reportParamDigestInterceptor" />
+			<interceptor-ref name="reportStack">
+				<param name="loginValidator.jsonEnabled">false</param>
+				<param name="jsonWorkflow.enabled">false</param>
+				<param name="privilegeWorkflow.jsonEnabled">false</param>
+			</interceptor-ref>
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="downloadExceptionHandler" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+			
+			<result name="success" type="stream">
+				<param name="inputName">inputStream</param>
+				<param name="contentType">
+					application/vnd.ms-excel
+				</param>
+				<param name="contentDisposition">
+					attachment;filename="${fileName}"
+				</param>
+				<param name="contentLength">${fileSize}</param>
+				<param name="bufferSize">1024</param>	
+			</result>
+			<result name="error" type="ctResult" >
+				<param name="contentParameter">content</param>
+				<param name="contentType">text/html</param>
+			</result>
+			<result name="input" type="ctResult" >
+				<param name="contentParameter">content</param>
+				<param name="contentType">text/html</param>
+			</result>
+		</action>
+        <!--
+        <action name="downloadGroupListByDay" class="listGroupAction" method="downloadByDay">
+            <interceptor-ref name="reportParamDigestInterceptor" />
+            <interceptor-ref name="reportStack">
+                <param name="loginValidator.jsonEnabled">false</param>
+                <param name="jsonWorkflow.enabled">false</param>
+                <param name="privilegeWorkflow.jsonEnabled">false</param>
+            </interceptor-ref>
+            <interceptor-ref name="reportPrivilegeInterceptor" />
+            <interceptor-ref name="dataPrivilegeStack" />
+            <interceptor-ref name="downloadExceptionHandler" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+			
+            <result name="success" type="stream">
+                <param name="inputName">inputStream</param>
+                <param name="contentType">
+                    application/vnd.ms-excel
+                </param>
+                <param name="contentDisposition">
+                    attachment;filename="${fileName}"
+                </param>
+                <param name="contentLength">${fileSize}</param>
+                <param name="bufferSize">1024</param>   
+            </result>
+            <result name="error" type="ctResult" >
+                <param name="contentParameter">content</param>
+                <param name="contentType">text/html</param>
+            </result>
+            <result name="input" type="ctResult" >
+                <param name="contentParameter">content</param>
+                <param name="contentType">text/html</param>
+            </result>
+        </action>
+        -->
+		<!--
+		<action name="downloadReport" class="downloadReportAction">
+			<interceptor-ref name="toolStack">
+				<param name="privilegeWorkflow.jsonEnabled">true</param>
+			</interceptor-ref>
+			<interceptor-ref name="userIdPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<result type="stream">
+				<param name="inputName">inputStream</param>
+				<param name="contentType">
+					application/vnd.ms-excel
+				</param>
+				<param name="contentDisposition">
+					attachment;filename="${fileName}"
+				</param>
+				<param name="contentLength">${fileSize}</param>
+				<param name="bufferSize">1024</param>	
+			</result>
+			<result name="input">/download-error.jsp</result>
+			<result name="error">/download-error.jsp</result>
+		</action>
+			-->
+		<!-- UNIT -->
+        <action name="unitList" class="listUnitAction" method="ajaxList">
+			<interceptor-ref name="reportStack" />
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+                        
+            <result name="success" type="json">
+                <param name="root">jsonObject</param>
+            </result>
+            <result name="error">/report/error.json</result>
+        </action>
+        
+        <action name="unitListByDay" class="listUnitAction" method="ajaxListByDay">
+            <interceptor-ref name="reportStack" />
+            <interceptor-ref name="reportPrivilegeInterceptor" />
+            <interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+                        
+            <result name="success" type="json">
+                <param name="root">jsonObject</param>
+            </result>
+            <result name="error">/report/error.json</result>
+        </action>
+        
+        <action name="unitListBySite" class="listUnitAction" method="ajaxListBySite">
+            <interceptor-ref name="reportStack" />
+            <interceptor-ref name="reportPrivilegeInterceptor" />
+            <interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+                        
+            <result name="success" type="json">
+                <param name="root">jsonObject</param>
+            </result>
+            <result name="error">/report/error.json</result>
+        </action>
+        
+        <action name="unitListBySubSite" class="listUnitAction" method="ajaxListBySubSite">
+            <interceptor-ref name="reportStack" />
+            <interceptor-ref name="reportPrivilegeInterceptor" />
+            <interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+                        
+            <result name="success" type="json">
+                <param name="root">jsonObject</param>
+            </result>
+            <result name="error">/report/error.json</result>
+        </action>	
+		
+		<!-- 分URL报告的汇总信息 -->
+		<action name="sumUnitReportPageByUrl" class="listUnitAction" method="ajaxPageSum">
+            <interceptor-ref name="reportStack" />
+            <interceptor-ref name="reportPrivilegeInterceptor" />
+            <interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+			<result name="success" type="json">
+				<param name="root">jsonObject</param>
+			</result>
+		</action>
+		
+		<!-- 分URL报告的列表 -->
+		<action name="ajaxUnitReportPageByUrl" class="listUnitAction" method="ajaxPage">
+            <interceptor-ref name="reportStack" />
+            <interceptor-ref name="reportPrivilegeInterceptor" />
+            <interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+			<result name="success" type="json">
+				<param name="root">jsonObject</param>
+			</result>
+		</action>
+            
+        <action name="unitSum" class="listUnitAction" method="ajaxFlashXml">
+			<interceptor-ref name="reportStack" />
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportFlashExceptionHandler" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+			
+            <result name="success" type="json">
+                <param name="root">jsonObject</param>
+            </result>
+        </action>
+            
+        <action name="downloadUnitList" class="listUnitAction" method="download">
+			<interceptor-ref name="reportParamDigestInterceptor" />
+            <interceptor-ref name="reportStack">
+                <param name="loginValidator.jsonEnabled">false</param>
+                <param name="jsonWorkflow.enabled">false</param>
+                <param name="privilegeWorkflow.jsonEnabled">false</param>
+            </interceptor-ref>
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="downloadExceptionHandler" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+			
+            <result name="success" type="stream">
+                <param name="inputName">inputStream</param>
+                <param name="contentType">
+                    application/vnd.ms-excel
+                </param>
+                <param name="contentDisposition">
+                    attachment;filename="${fileName}"
+                </param>
+                <param name="contentLength">${fileSize}</param>
+                <param name="bufferSize">1024</param>   
+            </result>
+            <result name="error" type="ctResult" >
+                <param name="contentParameter">content</param>
+                <param name="contentType">text/html</param>
+            </result>
+            <result name="input" type="ctResult" >
+                <param name="contentParameter">content</param>
+                <param name="contentType">text/html</param>
+            </result>
+        </action>
+        
+        <action name="downloadUnitListByDay" class="listUnitAction" method="downloadByDay">
+            <interceptor-ref name="reportParamDigestInterceptor" />
+            <interceptor-ref name="reportStack">
+                <param name="loginValidator.jsonEnabled">false</param>
+                <param name="jsonWorkflow.enabled">false</param>
+                <param name="privilegeWorkflow.jsonEnabled">false</param>
+            </interceptor-ref>
+            <interceptor-ref name="reportPrivilegeInterceptor" />
+            <interceptor-ref name="dataPrivilegeStack" />
+            <interceptor-ref name="downloadExceptionHandler" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+			
+            <result name="success" type="stream">
+                <param name="inputName">inputStream</param>
+                <param name="contentType">
+                    application/vnd.ms-excel
+                </param>
+                <param name="contentDisposition">
+                    attachment;filename="${fileName}"
+                </param>
+                <param name="contentLength">${fileSize}</param>
+                <param name="bufferSize">1024</param>   
+            </result>
+            <result name="error" type="ctResult" >
+                <param name="contentParameter">content</param>
+                <param name="contentType">text/html</param>
+            </result>
+            <result name="input" type="ctResult" >
+                <param name="contentParameter">content</param>
+                <param name="contentType">text/html</param>
+            </result>
+        </action>
+        
+        <action name="downloadUnitListBySite" class="listUnitAction" method="downloadBySite">
+            <interceptor-ref name="reportParamDigestInterceptor" />
+            <interceptor-ref name="reportStack">
+                <param name="loginValidator.jsonEnabled">false</param>
+                <param name="jsonWorkflow.enabled">false</param>
+                <param name="privilegeWorkflow.jsonEnabled">false</param>
+            </interceptor-ref>
+            <interceptor-ref name="reportPrivilegeInterceptor" />
+            <interceptor-ref name="dataPrivilegeStack" />
+            <interceptor-ref name="downloadExceptionHandler" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+			
+            <result name="success" type="stream">
+                <param name="inputName">inputStream</param>
+                <param name="contentType">
+                    application/vnd.ms-excel
+                </param>
+                <param name="contentDisposition">
+                    attachment;filename="${fileName}"
+                </param>
+                <param name="contentLength">${fileSize}</param>
+                <param name="bufferSize">1024</param>   
+            </result>
+            <result name="error" type="ctResult" >
+                <param name="contentParameter">content</param>
+                <param name="contentType">text/html</param>
+            </result>
+            <result name="input" type="ctResult" >
+                <param name="contentParameter">content</param>
+                <param name="contentType">text/html</param>
+            </result>
+        </action>
+        
+        <action name="downloadUnitListBySubSite" class="listUnitAction" method="downloadBySubSite">
+            <interceptor-ref name="reportParamDigestInterceptor" />
+            <interceptor-ref name="reportStack">
+                <param name="loginValidator.jsonEnabled">false</param>
+                <param name="jsonWorkflow.enabled">false</param>
+                <param name="privilegeWorkflow.jsonEnabled">false</param>
+            </interceptor-ref>
+            <interceptor-ref name="reportPrivilegeInterceptor" />
+            <interceptor-ref name="dataPrivilegeStack" />
+            <interceptor-ref name="downloadExceptionHandler" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+			
+            <result name="success" type="stream">
+                <param name="inputName">inputStream</param>
+                <param name="contentType">
+                    application/vnd.ms-excel
+                </param>
+                <param name="contentDisposition">
+                    attachment;filename="${fileName}"
+                </param>
+                <param name="contentLength">${fileSize}</param>
+                <param name="bufferSize">1024</param>   
+            </result>
+            <result name="error" type="ctResult" >
+                <param name="contentParameter">content</param>
+                <param name="contentType">text/html</param>
+            </result>
+            <result name="input" type="ctResult" >
+                <param name="contentParameter">content</param>
+                <param name="contentType">text/html</param>
+            </result>
+        </action>
+        
+        <!-- added by zhuxiaoling since cpweb-550 -->
+        <!-- 分日报告 -->
+        <action name="listReportByDay" class="listReportByDayAction" method="ajaxListByDay">
+            <interceptor-ref name="reportStack" />
+            <interceptor-ref name="reportPrivilegeInterceptor" />
+            <interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+                        
+            <result name="success" type="json">
+                <param name="root">jsonObject</param>
+            </result>
+            <result name="error">/report/error.json</result>
+        </action>
+        
+        <action name="downloadReportByDay" class="listReportByDayAction" method="downloadByDay">
+            <interceptor-ref name="reportParamDigestInterceptor" />
+            <interceptor-ref name="reportStack">
+                <param name="loginValidator.jsonEnabled">false</param>
+                <param name="jsonWorkflow.enabled">false</param>
+                <param name="privilegeWorkflow.jsonEnabled">false</param>
+            </interceptor-ref>
+            <interceptor-ref name="reportPrivilegeInterceptor" />
+            <interceptor-ref name="dataPrivilegeStack" />
+            <interceptor-ref name="downloadExceptionHandler" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+            
+			<result name="success" type="stream">
+                <param name="inputName">inputStream</param>
+                <param name="contentType">
+                    application/vnd.ms-excel
+                </param>
+                <param name="contentDisposition">
+                    attachment;filename="${fileName}"
+                </param>
+                <param name="contentLength">${fileSize}</param>
+                <param name="bufferSize">1024</param>   
+            </result>
+            <result name="error" type="ctResult" >
+                <param name="contentParameter">content</param>
+                <param name="contentType">text/html</param>
+            </result>
+            <result name="input" type="ctResult" >
+                <param name="contentParameter">content</param>
+                <param name="contentType">text/html</param>
+            </result>
+        </action>
+        
+        <!-- SITE -->
+        <!-- 有展现网站列表 -->
+		<action name="shownSiteList" class="listGroupSiteAction"
+			method="ajaxListShownSite">
+			<interceptor-ref name="reportStack" />
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+						
+			<result name="success" type="json">
+  				<param name="root">jsonObject</param>
+			</result>
+			<result name="error">/report/error.json</result>
+		</action>
+		<!-- 根据有查询参数得到相应的token给北斗使用 -->
+		<action name="shownSiteToken" class="listGroupSiteAction"
+			method="ajaxShownSiteToken">
+			<interceptor-ref name="reportStack" />
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+						
+			<result name="success" type="json">
+  				<param name="root">jsonObject</param>
+			</result>
+			<result name="error">/report/error.json</result>
+		</action>
+		<!-- 有展现网站分日图表（beidou3.x@cpweb-492去掉）
+		<action name="shownSiteSum" class="listGroupSiteAction" method="ajaxListShownSite4FlashXml">
+			<interceptor-ref name="reportStack" />
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportFlashExceptionHandler" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+			<result name="success" type="json">
+  				<param name="root">jsonObject</param>
+			</result>
+		</action>
+		 -->
+		<!-- 下载有展现网站列表 -->
+		<action name="downloadShownSiteList" class="listGroupSiteAction" method="downloadShownSiteList">
+			<interceptor-ref name="requestKeepOrderInterceptor" />
+			<interceptor-ref name="reportParamDigestInterceptor" />
+			<interceptor-ref name="reportStack">
+				<param name="loginValidator.jsonEnabled">false</param>
+				<param name="jsonWorkflow.enabled">false</param>
+				<param name="privilegeWorkflow.jsonEnabled">false</param>
+			</interceptor-ref>
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="downloadExceptionHandler" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+			
+			<result name="success" type="stream">
+				<param name="inputName">inputStream</param>
+				<param name="contentType">
+					application/vnd.ms-excel
+				</param>
+				<param name="contentDisposition">
+					attachment;filename="${fileName}"
+				</param>
+				<param name="contentLength">${fileSize}</param>
+				<param name="bufferSize">1024</param>	
+			</result>
+			<result name="error" type="ctResult" >
+				<param name="contentParameter">content</param>
+				<param name="contentType">text/html</param>
+			</result>
+			<result name="input" type="ctResult" >
+				<param name="contentParameter">content</param>
+				<param name="contentType">text/html</param>
+			</result>
+		</action>
+		
+		<!-- 自选网站列表 -->
+		<action name="chosenSiteList" class="listGroupSiteAction"
+			method="ajaxListChosenSite">
+			<interceptor-ref name="reportStack" />
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+						
+			<result name="success" type="json">
+  				<param name="root">jsonObject</param>
+			</result>
+			<result name="error">/report/error.json</result>
+		</action>
+		<!-- 根据有查询参数得到相应的token给北斗使用 -->
+		<action name="chosenSiteToken" class="listGroupSiteAction"
+			method="ajaxChosenSiteToken">
+			<interceptor-ref name="reportStack" />
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+						
+			<result name="success" type="json">
+  				<param name="root">jsonObject</param>
+			</result>
+			<result name="error">/report/error.json</result>
+		</action>
+		<!-- 自选网站分日图表（beidou3.x@cpweb-492去掉）
+		<action name="chosenSiteSum" class="listGroupSiteAction" method="ajaxListChosenSite4FlashXml">
+			<interceptor-ref name="reportStack" />
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportFlashExceptionHandler" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+			
+			<result name="success" type="json">
+  				<param name="root">jsonObject</param>
+			</result>
+		</action>
+		 -->
+		<!-- 下载自选网站列表 -->
+		<action name="downloadChosenSiteList" class="listGroupSiteAction" method="downloadChosenSiteList">
+			<interceptor-ref name="requestKeepOrderInterceptor" />
+			<interceptor-ref name="reportParamDigestInterceptor" />
+			<interceptor-ref name="reportStack">
+				<param name="loginValidator.jsonEnabled">false</param>
+				<param name="jsonWorkflow.enabled">false</param>
+				<param name="privilegeWorkflow.jsonEnabled">false</param>
+			</interceptor-ref>			
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="downloadExceptionHandler" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+			
+			<result name="success" type="stream">
+				<param name="inputName">inputStream</param>
+				<param name="contentType">
+					application/vnd.ms-excel
+				</param>
+				<param name="contentDisposition">
+					attachment;filename="${fileName}"
+				</param>
+				<param name="contentLength">${fileSize}</param>
+				<param name="bufferSize">1024</param>	
+			</result>
+			<result name="error" type="ctResult" >
+				<param name="contentParameter">content</param>
+				<param name="contentType">text/html</param>
+			</result>
+			<result name="input" type="ctResult" >
+				<param name="contentParameter">content</param>
+				<param name="contentType">text/html</param>
+			</result>
+		</action>
+		
+		<!-- 自选行业列表 -->
+		<action name="chosenTradeList" class="listGroupSiteAction"
+			method="ajaxListChosenTrade">
+			<interceptor-ref name="reportStack" />
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+						
+			<result name="success" type="json">
+  				<param name="root">jsonObject</param>
+			</result>
+			<result name="error">/report/error.json</result>
+		</action>
+		<!-- 根据有查询参数得到相应的token给北斗使用 -->
+		<action name="chosenTradeToken" class="listGroupSiteAction"
+			method="ajaxChosenTradeToken">
+			<interceptor-ref name="reportStack" />
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+						
+			<result name="success" type="json">
+  				<param name="root">jsonObject</param>
+			</result>
+			<result name="error">/report/error.json</result>
+		</action>
+		<!-- 自选行业分日图表 （beidou3.x@cpweb-492去掉）
+		<action name="chosenTradeSum" class="listGroupSiteAction" method="ajaxListChosenTrade4FlashXml">
+			<interceptor-ref name="reportStack">
+			</interceptor-ref>
+			<interceptor-ref name="reportFlashExceptionHandler" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+			<result name="success" type="json">
+  				<param name="root">jsonObject</param>
+			</result>
+		</action>
+		-->
+		<!-- 下载自选行业列表 -->
+		<action name="downloadChosenTradeList" class="listGroupSiteAction" method="downloadChosenTradeList">
+			<interceptor-ref name="reportParamDigestInterceptor" />
+			<interceptor-ref name="reportStack">
+				<param name="loginValidator.jsonEnabled">false</param>
+				<param name="jsonWorkflow.enabled">false</param>
+				<param name="privilegeWorkflow.jsonEnabled">false</param>
+			</interceptor-ref>		
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="downloadExceptionHandler" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+			
+			<result name="success" type="stream">
+				<param name="inputName">inputStream</param>
+				<param name="contentType">
+					application/vnd.ms-excel
+				</param>
+				<param name="contentDisposition">
+					attachment;filename="${fileName}"
+				</param>
+				<param name="contentLength">${fileSize}</param>
+				<param name="bufferSize">1024</param>	
+			</result>
+			<result name="error" type="ctResult" >
+				<param name="contentParameter">content</param>
+				<param name="contentType">text/html</param>
+			</result>
+			<result name="input" type="ctResult" >
+				<param name="contentParameter">content</param>
+				<param name="contentType">text/html</param>
+			</result>
+		</action>		
+		
+		<!-- 分行业列表 -->
+		<action name="tradeSiteList" class="listGroupSiteAction"
+			method="ajaxListTradeSite">
+			<interceptor-ref name="reportStack" />
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+			
+			<result name="success" type="json">
+  				<param name="root">jsonObject</param>
+			</result>
+			<result name="error">/report/error.json</result>
+		</action>
+		<!-- 根据有查询参数得到相应的token给北斗使用 -->
+		<action name="tradeSiteToken" class="listGroupSiteAction"
+			method="ajaxTradeSiteToken">
+			<interceptor-ref name="reportStack" />
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+						
+			<result name="success" type="json">
+  				<param name="root">jsonObject</param>
+			</result>
+			<result name="error">/report/error.json</result>
+		</action>
+		<!-- 分行业分日图表 （beidou3.x@cpweb-492去掉）
+		<action name="tradeSiteSum" class="listGroupSiteAction" method="ajaxListTradeSite4FlashXml">
+			<interceptor-ref name="reportStack" />
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportFlashExceptionHandler" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+			
+			<result name="success" type="json">
+  				<param name="root">jsonObject</param>
+			</result>
+		</action>
+		-->
+		<!-- 下载分行业列表 -->
+		<action name="downloadTradeSiteList" class="listGroupSiteAction" method="downloadTradeSiteList">
+			<interceptor-ref name="reportParamDigestInterceptor" />
+			<interceptor-ref name="reportStack">
+				<param name="loginValidator.jsonEnabled">false</param>
+				<param name="jsonWorkflow.enabled">false</param>
+				<param name="privilegeWorkflow.jsonEnabled">false</param>
+			</interceptor-ref>
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="downloadExceptionHandler" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+			
+			<result name="success" type="stream">
+				<param name="inputName">inputStream</param>
+				<param name="contentType">
+					application/vnd.ms-excel
+				</param>
+				<param name="contentDisposition">
+					attachment;filename="${fileName}"
+				</param>
+				<param name="contentLength">${fileSize}</param>
+				<param name="bufferSize">1024</param>	
+			</result>
+			<result name="error" type="ctResult" >
+				<param name="contentParameter">content</param>
+				<param name="contentType">text/html</param>
+			</result>
+			<result name="input" type="ctResult" >
+				<param name="contentParameter">content</param>
+				<param name="contentType">text/html</param>
+			</result>
+		</action>
+		
+		<!-- added by hanxu03 in cpweb-344 CT主题词报表 start -->
+		<action name="ktList" class="listCproGroupKtAction" method="ajaxList">
+			<interceptor-ref name="reportStack" />
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+						
+			<result name="success" type="json">
+  				<param name="root">jsonObject</param>
+			</result>
+			<result name="error">/report/error.json</result>
+		</action>
+
+		<action name="downloadKtList" class="listCproGroupKtAction" method="download">
+			<interceptor-ref name="requestKeepOrderInterceptor" />
+			<interceptor-ref name="reportParamDigestInterceptor" />
+            <interceptor-ref name="reportStack">
+                <param name="loginValidator.jsonEnabled">false</param>
+                <param name="jsonWorkflow.enabled">false</param>
+                <param name="privilegeWorkflow.jsonEnabled">false</param>
+            </interceptor-ref>
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="downloadExceptionHandler" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+			
+            <result name="success" type="stream">
+                <param name="inputName">inputStream</param>
+                <param name="contentType">
+                    application/vnd.ms-excel
+                </param>
+                <param name="contentDisposition">
+                    attachment;filename="${fileName}"
+                </param>
+                <param name="contentLength">${fileSize}</param>
+                <param name="bufferSize">1024</param>   
+            </result>
+            <result name="error" type="ctResult" >
+                <param name="contentParameter">content</param>
+                <param name="contentType">text/html</param>
+            </result>
+            <result name="input" type="ctResult" >
+                <param name="contentParameter">content</param>
+                <param name="contentType">text/html</param>
+            </result>
+        </action>
+        
+        <action name="smartIdeaKeywordList" class="listCproGroupSiKtAction" method="ajaxList">
+			<interceptor-ref name="reportStack" />
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+						
+			<result name="success" type="json">
+  				<param name="root">jsonObject</param>
+			</result>
+			<result name="error">/report/error.json</result>
+		</action>
+
+		<action name="downloadSmartIdeaKeywordList" class="listCproGroupSiKtAction" method="download">
+			<interceptor-ref name="requestKeepOrderInterceptor" />
+			<interceptor-ref name="reportParamDigestInterceptor" />
+            <interceptor-ref name="reportStack">
+                <param name="loginValidator.jsonEnabled">false</param>
+                <param name="jsonWorkflow.enabled">false</param>
+                <param name="privilegeWorkflow.jsonEnabled">false</param>
+            </interceptor-ref>
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="downloadExceptionHandler" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+			
+            <result name="success" type="stream">
+                <param name="inputName">inputStream</param>
+                <param name="contentType">
+                    application/vnd.ms-excel
+                </param>
+                <param name="contentDisposition">
+                    attachment;filename="${fileName}"
+                </param>
+                <param name="contentLength">${fileSize}</param>
+                <param name="bufferSize">1024</param>   
+            </result>
+            <result name="error" type="ctResult" >
+                <param name="contentParameter">content</param>
+                <param name="contentType">text/html</param>
+            </result>
+            <result name="input" type="ctResult" >
+                <param name="contentParameter">content</param>
+                <param name="contentType">text/html</param>
+            </result>
+        </action>
+        
+        <action name="shownSmartIdeaKeywordList" class="listCproGroupSiKtAction" method="ajaxListShown">
+			<interceptor-ref name="reportStack" />
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+						
+			<result name="success" type="json">
+  				<param name="root">jsonObject</param>
+			</result>
+			<result name="error">/report/error.json</result>
+		</action>
+
+		<action name="downloadShownSmartIdeaKeywordList" class="listCproGroupSiKtAction" method="downloadShown">
+			<interceptor-ref name="requestKeepOrderInterceptor" />
+			<interceptor-ref name="reportParamDigestInterceptor" />
+            <interceptor-ref name="reportStack">
+                <param name="loginValidator.jsonEnabled">false</param>
+                <param name="jsonWorkflow.enabled">false</param>
+                <param name="privilegeWorkflow.jsonEnabled">false</param>
+            </interceptor-ref>
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="downloadExceptionHandler" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+			
+            <result name="success" type="stream">
+                <param name="inputName">inputStream</param>
+                <param name="contentType">
+                    application/vnd.ms-excel
+                </param>
+                <param name="contentDisposition">
+                    attachment;filename="${fileName}"
+                </param>
+                <param name="contentLength">${fileSize}</param>
+                <param name="bufferSize">1024</param>   
+            </result>
+            <result name="error" type="ctResult" >
+                <param name="contentParameter">content</param>
+                <param name="contentType">text/html</param>
+            </result>
+            <result name="input" type="ctResult" >
+                <param name="contentParameter">content</param>
+                <param name="contentType">text/html</param>
+            </result>
+        </action>
+
+		<!-- 关键词报告取消分日图表, modified by genglei, @cpweb-492 -->
+		<!-- 
+		<action name="ktSum" class="listCproGroupKtAction" method="ajaxFlashXml">
+			<interceptor-ref name="reportStack" />
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportFlashExceptionHandler" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+			
+            <result name="success" type="json">
+                <param name="root">jsonObject</param>
+            </result>
+        </action>
+        -->
+
+		<!-- modified by genglei in cpweb-492, 增加删除受众组合词 -->
+		<action name="deleteAllKt" class="listCproGroupKtAction" method="deleteAllKt">
+            <interceptor-ref name="reportStack" />
+            <interceptor-ref name="reportPrivilegeInterceptor" />
+            <interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+			
+			<result name="deleteNormalKeywords" type="redirect">
+				${beidouBasePath}/cprogroup/deleteMultiKt.action?userId=${userId}&amp;token=${token}
+			</result>
+			<result name="deletePackKeywords" type="redirect">
+				${beidouBasePath}/cprogroup/deletePackKeyword.action?userId=${userId}&amp;tokenId=${token}
+			</result>
+			<result name="error" type="json">
+				<param name="root">jsonObject</param>
+			</result>
+		</action>
+		
+		<action name="deleteAllSmartIdeaKeyword" class="listCproGroupSiKtAction" method="deleteAll">
+            <interceptor-ref name="reportStack" />
+            <interceptor-ref name="reportPrivilegeInterceptor" />
+            <interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+			
+			<result name="deleteSiKeywords" type="redirect">
+				${beidouBasePath}/cprogroup/deleteMultiSmartIdeaKeywords.action?userId=${userId}&amp;token=${token}
+			</result>
+			<result name="error" type="json">
+				<param name="root">jsonObject</param>
+			</result>
+		</action>
+		
+		<!-- added by hanxu03 in cpweb-344 CT主题词报表 end -->
+		
+		<!-- 转化数据 -->
+		<action name="transDataList" class="listTransDataAction" method="execute">
+			<interceptor-ref name="reportStack" />
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+						
+			<result name="success" type="json">
+  				<param name="root">jsonObject</param>
+			</result>
+			<result name="error">/report/error.json</result>
+		</action>
+		<!-- 转化数据下载 -->
+		<action name="transDataDownload" class="listTransDataAction" method="download">
+			<interceptor-ref name="reportParamDigestInterceptor" />
+			<interceptor-ref name="reportStack">
+				<param name="loginValidator.jsonEnabled">false</param>
+				<param name="jsonWorkflow.enabled">false</param>
+				<param name="privilegeWorkflow.jsonEnabled">false</param>
+			</interceptor-ref>
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="downloadExceptionHandler" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+			
+			<result name="success" type="stream">
+				<param name="inputName">inputStream</param>
+				<param name="contentType">
+					application/vnd.ms-excel
+				</param>
+				<param name="contentDisposition">
+					attachment;filename="${fileName}"
+				</param>
+				<param name="contentLength">${fileSize}</param>
+				<param name="bufferSize">1024</param>	
+			</result>
+			<result name="error" type="ctResult" >
+				<param name="contentParameter">content</param>
+				<param name="contentType">text/html</param>
+			</result>
+			<result name="input" type="ctResult" >
+				<param name="contentParameter">content</param>
+				<param name="contentType">text/html</param>
+			</result>
+		</action>
+		
+		
+		<!-- added by liuhao05 in cpweb-443 IT兴趣报表 -->
+		
+		<action name="shownInterestList" class="listCproGroupItAction" method="ajaxListShownInterest">
+			<interceptor-ref name="reportStack" />
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+						
+			<result name="success" type="json">
+  				<param name="root">jsonObject</param>
+			</result>
+			<result name="error">/report/error.json</result>
+		</action>
+		
+		<action name="downloadShownInterestList" class="listCproGroupItAction" method="downloadShownInterest">
+			<interceptor-ref name="reportParamDigestInterceptor" />
+            <interceptor-ref name="reportStack">
+                <param name="loginValidator.jsonEnabled">false</param>
+                <param name="jsonWorkflow.enabled">false</param>
+                <param name="privilegeWorkflow.jsonEnabled">false</param>
+            </interceptor-ref>
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="downloadExceptionHandler" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+			
+            <result name="success" type="stream">
+                <param name="inputName">inputStream</param>
+                <param name="contentType">
+                    application/vnd.ms-excel
+                </param>
+                <param name="contentDisposition">
+                    attachment;filename="${fileName}"
+                </param>
+                <param name="contentLength">${fileSize}</param>
+                <param name="bufferSize">1024</param>   
+            </result>
+            <result name="error" type="ctResult" >
+                <param name="contentParameter">content</param>
+                <param name="contentType">text/html</param>
+            </result>
+            <result name="input" type="ctResult" >
+                <param name="contentParameter">content</param>
+                <param name="contentType">text/html</param>
+            </result>
+        </action>
+        
+        <!-- 兴趣报告取消分日图表, modified by genglei, @cpweb-492 -->
+		<!--
+		<action name="shownInterestSum" class="listCproGroupItAction" method="ajaxListShownInterestForFlash">
+			<interceptor-ref name="reportStack" />
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportFlashExceptionHandler" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+			
+            <result name="success" type="json">
+                <param name="root">jsonObject</param>
+            </result>
+        </action>
+		-->
+		
+		<action name="chosenInterestList" class="listCproGroupItAction" method="ajaxListChosenInterest">
+			<interceptor-ref name="reportStack" />
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+						
+			<result name="success" type="json">
+  				<param name="root">jsonObject</param>
+			</result>
+			<result name="error">/report/error.json</result>
+		</action>
+		
+		<action name="downloadChosenInterestList" class="listCproGroupItAction" method="downloadChosenInterest">
+			<interceptor-ref name="reportParamDigestInterceptor" />
+            <interceptor-ref name="reportStack">
+                <param name="loginValidator.jsonEnabled">false</param>
+                <param name="jsonWorkflow.enabled">false</param>
+                <param name="privilegeWorkflow.jsonEnabled">false</param>
+            </interceptor-ref>
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="downloadExceptionHandler" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+			
+            <result name="success" type="stream">
+                <param name="inputName">inputStream</param>
+                <param name="contentType">
+                    application/vnd.ms-excel
+                </param>
+                <param name="contentDisposition">
+                    attachment;filename="${fileName}"
+                </param>
+                <param name="contentLength">${fileSize}</param>
+                <param name="bufferSize">1024</param>   
+            </result>
+            <result name="error" type="ctResult" >
+                <param name="contentParameter">content</param>
+                <param name="contentType">text/html</param>
+            </result>
+            <result name="input" type="ctResult" >
+                <param name="contentParameter">content</param>
+                <param name="contentType">text/html</param>
+            </result>
+        </action>
+
+		<!-- 兴趣报告取消分日图表, modified by genglei, @cpweb-492 -->
+		<!--
+		<action name="chosenInterestSum" class="listCproGroupItAction" method="ajaxListChosenInterestForFlash">
+			<interceptor-ref name="reportStack" />
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportFlashExceptionHandler" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+			
+            <result name="success" type="json">
+                <param name="root">jsonObject</param>
+            </result>
+        </action>
+        -->
+        
+		<action name="deleteAllIt" class="listCproGroupItAction" method="deleteAllIt">
+            <interceptor-ref name="reportStack" />
+            <interceptor-ref name="reportPrivilegeInterceptor" />
+            <interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+			<!--
+			<result name="success" type="json">
+				<param name="root">jsonObject</param>
+			</result> -->
+			<result name="success" type="redirect">
+				${beidouBasePath}/cprogroup/removeAllGroupIT.action?userId=${userId}&amp;tokenId=${token}
+			</result>
+			<result name="error" type="json">
+				<param name="root">jsonObject</param>
+			</result>
+		</action>
+		
+		<!-- IT兴趣报表 end-->
+		
+		<!-- 移动应用列表 added by wangchongjie in BMob -->
+		<action name="appList" class="listGroupAppAction" method="ajaxAppList">
+			<interceptor-ref name="reportStack" />
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+						
+			<result name="success" type="json">
+  				<param name="root">jsonObject</param>
+			</result>
+			<result name="error">/report/error.json</result>
+		</action>
+
+		<action name="downloadAppList" class="listGroupAppAction" method="downloadAppList">
+			<interceptor-ref name="reportParamDigestInterceptor" />
+            <interceptor-ref name="reportStack">
+                <param name="loginValidator.jsonEnabled">false</param>
+                <param name="jsonWorkflow.enabled">false</param>
+                <param name="privilegeWorkflow.jsonEnabled">false</param>
+            </interceptor-ref>
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="downloadExceptionHandler" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+			
+            <result name="success" type="stream">
+                <param name="inputName">inputStream</param>
+                <param name="contentType">
+                    application/vnd.ms-excel
+                </param>
+                <param name="contentDisposition">
+                    attachment;filename="${fileName}"
+                </param>
+                <param name="contentLength">${fileSize}</param>
+                <param name="bufferSize">1024</param>   
+            </result>
+            <result name="error" type="ctResult" >
+                <param name="contentParameter">content</param>
+                <param name="contentType">text/html</param>
+            </result>
+            <result name="input" type="ctResult" >
+                <param name="contentParameter">content</param>
+                <param name="contentType">text/html</param>
+            </result>
+        </action>	
+        
+        <!-- 根据有查询参数得到相应的token给北斗使用 -->
+		<action name="appToken" class="listGroupAppAction"
+			method="ajaxAppToken">
+			<interceptor-ref name="reportStack" />
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+						
+			<result name="success" type="json">
+  				<param name="root">jsonObject</param>
+			</result>
+			<result name="error">/report/error.json</result>
+		</action>
+        <!-- 移动应用列表 end -->
+		
+		<!-- 设备列表 added by wangchongjie in BMob plus -->
+		<action name="deviceList" class="listPlanDeviceAction" method="ajaxDeviceList">
+			<interceptor-ref name="reportStack" />
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+						
+			<result name="success" type="json">
+  				<param name="root">jsonObject</param>
+			</result>
+			<result name="error">/report/error.json</result>
+		</action>
+
+		<action name="downloadDeviceList" class="listPlanDeviceAction" method="downloadDeviceList">
+			<interceptor-ref name="reportParamDigestInterceptor" />
+            <interceptor-ref name="reportStack">
+                <param name="loginValidator.jsonEnabled">false</param>
+                <param name="jsonWorkflow.enabled">false</param>
+                <param name="privilegeWorkflow.jsonEnabled">false</param>
+            </interceptor-ref>
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="downloadExceptionHandler" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+			
+            <result name="success" type="stream">
+                <param name="inputName">inputStream</param>
+                <param name="contentType">
+                    application/vnd.ms-excel
+                </param>
+                <param name="contentDisposition">
+                    attachment;filename="${fileName}"
+                </param>
+                <param name="contentLength">${fileSize}</param>
+                <param name="bufferSize">1024</param>   
+            </result>
+            <result name="error" type="ctResult" >
+                <param name="contentParameter">content</param>
+                <param name="contentType">text/html</param>
+            </result>
+            <result name="input" type="ctResult" >
+                <param name="contentParameter">content</param>
+                <param name="contentType">text/html</param>
+            </result>
+        </action>	
+        <!-- 设备列表 end -->
+        
+        
+        
+        <!-- AT列表 added by wangchongjie in ATleft -->
+		<action name="atList" class="listGroupAtAction" method="ajaxAtList">
+			<interceptor-ref name="reportStack" />
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+						
+			<result name="success" type="json">
+  				<param name="root">jsonObject</param>
+			</result>
+			<result name="error">/report/error.json</result>
+		</action>
+
+		<action name="downloadAtList" class="listGroupAtAction" method="downloadAtList">
+			<interceptor-ref name="reportParamDigestInterceptor" />
+            <interceptor-ref name="reportStack">
+                <param name="loginValidator.jsonEnabled">false</param>
+                <param name="jsonWorkflow.enabled">false</param>
+                <param name="privilegeWorkflow.jsonEnabled">false</param>
+            </interceptor-ref>
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="downloadExceptionHandler" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+			
+            <result name="success" type="stream">
+                <param name="inputName">inputStream</param>
+                <param name="contentType">
+                    application/vnd.ms-excel
+                </param>
+                <param name="contentDisposition">
+                    attachment;filename="${fileName}"
+                </param>
+                <param name="contentLength">${fileSize}</param>
+                <param name="bufferSize">1024</param>   
+            </result>
+            <result name="error" type="ctResult" >
+                <param name="contentParameter">content</param>
+                <param name="contentType">text/html</param>
+            </result>
+            <result name="input" type="ctResult" >
+                <param name="contentParameter">content</param>
+                <param name="contentType">text/html</param>
+            </result>
+        </action>	
+        
+        <!-- 根据有查询参数得到相应的token给北斗使用 -->
+		<action name="deleteAllAt" class="listGroupAtAction"
+			method="deleteAllAt">
+			<interceptor-ref name="reportStack" />
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+						
+			<result name="deleteAllAt" type="redirect">
+  				${beidouBasePath}/atLeft/deleteAllAtWords.action?userId=${userId}&amp;token=${token}
+			</result>
+			<result name="error">/report/error.json</result>
+		</action>
+        <!-- AT列表 end -->
+        
+        <!-- ATTACH AD列表 added by wangchongjie in attach ad -->
+		<action name="attachList" class="listGroupAttachAction" method="ajaxAttachList">
+			<interceptor-ref name="reportStack" />
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+						
+			<result name="success" type="json">
+  				<param name="root">jsonObject</param>
+			</result>
+			<result name="error">/report/error.json</result>
+		</action>
+
+		<action name="downloadAttachList" class="listGroupAttachAction" method="downloadAttachList">
+			<interceptor-ref name="reportParamDigestInterceptor" />
+            <interceptor-ref name="reportStack">
+                <param name="loginValidator.jsonEnabled">false</param>
+                <param name="jsonWorkflow.enabled">false</param>
+                <param name="privilegeWorkflow.jsonEnabled">false</param>
+            </interceptor-ref>
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="downloadExceptionHandler" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+			
+            <result name="success" type="stream">
+                <param name="inputName">inputStream</param>
+                <param name="contentType">
+                    application/vnd.ms-excel
+                </param>
+                <param name="contentDisposition">
+                    attachment;filename="${fileName}"
+                </param>
+                <param name="contentLength">${fileSize}</param>
+                <param name="bufferSize">1024</param>   
+            </result>
+            <result name="error" type="ctResult" >
+                <param name="contentParameter">content</param>
+                <param name="contentType">text/html</param>
+            </result>
+            <result name="input" type="ctResult" >
+                <param name="contentParameter">content</param>
+                <param name="contentType">text/html</param>
+            </result>
+        </action>	
+        
+        <action name="sublinkList" class="listGroupSublinkAction" method="sublinkList">
+			<interceptor-ref name="reportStack" />
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+						
+			<result name="success" type="json">
+  				<param name="root">jsonObject</param>
+			</result>
+			<result name="error">/report/error.json</result>
+		</action>
+		
+		<action name="downloadSublinkList" class="listGroupSublinkAction" method="downloadSublinkList">
+			<interceptor-ref name="reportParamDigestInterceptor" />
+            <interceptor-ref name="reportStack">
+                <param name="loginValidator.jsonEnabled">false</param>
+                <param name="jsonWorkflow.enabled">false</param>
+                <param name="privilegeWorkflow.jsonEnabled">false</param>
+            </interceptor-ref>
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="downloadExceptionHandler" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+			
+            <result name="success" type="stream">
+                <param name="inputName">inputStream</param>
+                <param name="contentType">
+                    application/vnd.ms-excel
+                </param>
+                <param name="contentDisposition">
+                    sublink;filename="${fileName}"
+                </param>
+                <param name="contentLength">${fileSize}</param>
+                <param name="bufferSize">1024</param>   
+            </result>
+            <result name="error" type="ctResult" >
+                <param name="contentParameter">content</param>
+                <param name="contentType">text/html</param>
+            </result>
+            <result name="input" type="ctResult" >
+                <param name="contentParameter">content</param>
+                <param name="contentType">text/html</param>
+            </result>
+        </action>
+        
+        <!-- 根据有查询参数得到相应的token给北斗使用 -->
+         <!-- 
+		<action name="deleteAllAttach" class="listGroupAttachAction"
+			method="deleteAllAttach">
+			<interceptor-ref name="reportStack" />
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+						
+			<result name="deleteAllAttach" type="redirect">
+  				${beidouBasePath}/attach/deleteAllAttachWords.action?userId=${userId}&amp;token=${token}
+			</result>
+			<result name="error">/report/error.json</result>
+		</action>
+		-->
+        <!-- ATTACH AD列表 end -->
+		
+		
+		<!-- added by liuhao05 in cpweb-443 人群定向性别列表 -->
+		<action name="dtList" class="listCproGroupDtAction" method="ajaxDtList">
+			<interceptor-ref name="reportStack" />
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+						
+			<result name="success" type="json">
+  				<param name="root">jsonObject</param>
+			</result>
+			<result name="error">/report/error.json</result>
+		</action>
+
+		<action name="downloadDtList" class="listCproGroupDtAction" method="downloadDtList">
+			<interceptor-ref name="reportParamDigestInterceptor" />
+            <interceptor-ref name="reportStack">
+                <param name="loginValidator.jsonEnabled">false</param>
+                <param name="jsonWorkflow.enabled">false</param>
+                <param name="privilegeWorkflow.jsonEnabled">false</param>
+            </interceptor-ref>
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="downloadExceptionHandler" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+			
+            <result name="success" type="stream">
+                <param name="inputName">inputStream</param>
+                <param name="contentType">
+                    application/vnd.ms-excel
+                </param>
+                <param name="contentDisposition">
+                    attachment;filename="${fileName}"
+                </param>
+                <param name="contentLength">${fileSize}</param>
+                <param name="bufferSize">1024</param>   
+            </result>
+            <result name="error" type="ctResult" >
+                <param name="contentParameter">content</param>
+                <param name="contentType">text/html</param>
+            </result>
+            <result name="input" type="ctResult" >
+                <param name="contentParameter">content</param>
+                <param name="contentType">text/html</param>
+            </result>
+        </action>
+        
+        <action name="smartIdeaProductList" class="listGroupProductAction" method="ajaxList">
+			<interceptor-ref name="reportStack" />
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+						
+			<result name="success" type="json">
+  				<param name="root">jsonObject</param>
+			</result>
+			<result name="error">/report/error.json</result>
+		</action>
+
+		<action name="downloadSmartIdeaProductList" class="listGroupProductAction" method="download">
+			<interceptor-ref name="reportParamDigestInterceptor" />
+            <interceptor-ref name="reportStack">
+                <param name="loginValidator.jsonEnabled">false</param>
+                <param name="jsonWorkflow.enabled">false</param>
+                <param name="privilegeWorkflow.jsonEnabled">false</param>
+            </interceptor-ref>
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="downloadExceptionHandler" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+			
+            <result name="success" type="stream">
+                <param name="inputName">inputStream</param>
+                <param name="contentType">
+                    application/vnd.ms-excel
+                </param>
+                <param name="contentDisposition">
+                    attachment;filename="${fileName}"
+                </param>
+                <param name="contentLength">${fileSize}</param>
+                <param name="bufferSize">1024</param>   
+            </result>
+            <result name="error" type="ctResult" >
+                <param name="contentParameter">content</param>
+                <param name="contentType">text/html</param>
+            </result>
+            <result name="input" type="ctResult" >
+                <param name="contentParameter">content</param>
+                <param name="contentType">text/html</param>
+            </result>
+        </action>	
+        
+		
+        <!-- 人群定向性别列表 end -->
+        
+        <!-- added by liuhao05 in cpweb-492 地域列表 -->
+		<action name="regionList" class="listCproRegionAction" method="ajaxRegionList">
+			<interceptor-ref name="reportStack" />
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+						
+			<result name="success" type="json">
+  				<param name="root">jsonObject</param>
+			</result>
+			<result name="error">/report/error.json</result>
+		</action>
+
+		<action name="downloadRegionList" class="listCproRegionAction" method="downloadRegionList">
+			<interceptor-ref name="reportParamDigestInterceptor" />
+            <interceptor-ref name="reportStack">
+                <param name="loginValidator.jsonEnabled">false</param>
+                <param name="jsonWorkflow.enabled">false</param>
+                <param name="privilegeWorkflow.jsonEnabled">false</param>
+            </interceptor-ref>
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="downloadExceptionHandler" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+			
+            <result name="success" type="stream">
+                <param name="inputName">inputStream</param>
+                <param name="contentType">
+                    application/vnd.ms-excel
+                </param>
+                <param name="contentDisposition">
+                    attachment;filename="${fileName}"
+                </param>
+                <param name="contentLength">${fileSize}</param>
+                <param name="bufferSize">1024</param>   
+            </result>
+            <result name="error" type="ctResult" >
+                <param name="contentParameter">content</param>
+                <param name="contentType">text/html</param>
+            </result>
+            <result name="input" type="ctResult" >
+                <param name="contentParameter">content</param>
+                <param name="contentType">text/html</param>
+            </result>
+        </action>
+        
+        <!-- 人群定向性别列表 end -->
+        
+        <!-- 受众组合列表 begin -->
+        <action name="packList" class="listCproGroupPackAction" method="ajaxList">
+			<interceptor-ref name="reportStack" />
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+						
+			<result name="success" type="json">
+  				<param name="root">jsonObject</param>
+			</result>
+			<result name="error">/report/error.json</result>
+		</action>
+
+		<action name="downloadPackList" class="listCproGroupPackAction" method="download">
+			<interceptor-ref name="reportParamDigestInterceptor" />
+            <interceptor-ref name="reportStack">
+                <param name="loginValidator.jsonEnabled">false</param>
+                <param name="jsonWorkflow.enabled">false</param>
+                <param name="privilegeWorkflow.jsonEnabled">false</param>
+            </interceptor-ref>
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="downloadExceptionHandler" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+			
+            <result name="success" type="stream">
+                <param name="inputName">inputStream</param>
+                <param name="contentType">
+                    application/vnd.ms-excel
+                </param>
+                <param name="contentDisposition">
+                    attachment;filename="${fileName}"
+                </param>
+                <param name="contentLength">${fileSize}</param>
+                <param name="bufferSize">1024</param>   
+            </result>
+            <result name="error" type="ctResult" >
+                <param name="contentParameter">content</param>
+                <param name="contentType">text/html</param>
+            </result>
+            <result name="input" type="ctResult" >
+                <param name="contentParameter">content</param>
+                <param name="contentType">text/html</param>
+            </result>
+        </action>
+
+		<action name="deleteAllPack" class="listCproGroupPackAction" method="deleteAllPack">
+            <interceptor-ref name="reportStack" />
+            <interceptor-ref name="reportPrivilegeInterceptor" />
+            <interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+			
+			<result name="success" type="redirect">
+				${beidouBasePath}/cprogroup/delGroupPack.action?userId=${userId}&amp;token=${token}
+			</result>
+
+			<result name="error" type="json">
+				<param name="root">jsonObject</param>
+			</result>
+		</action>
+        <!-- 受众组合列表 end -->
+        
+        <!-- 受众分析 -->
+        <action name="showAudienceInfo" class="listCproAudiencection" method="ajaxAudienceInfo">
+			<interceptor-ref name="reportStack" />
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+						
+			<result name="success" type="json">
+  				<param name="root">jsonObject</param>
+			</result>
+			<result name="error">/report/error.json</result>
+		</action>
+		
+		<action name="showAudienceGenderList" class="listCproAudiencection" method="ajaxGenderAudienceList">
+			<interceptor-ref name="reportStack" />
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+						
+			<result name="success" type="json">
+  				<param name="root">jsonObject</param>
+			</result>
+			<result name="error">/report/error.json</result>
+		</action>
+		
+		<action name="showAudienceRegionList" class="listCproAudiencection" method="ajaxRegionAudienceList">
+			<interceptor-ref name="reportStack" />
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+						
+			<result name="success" type="json">
+  				<param name="root">jsonObject</param>
+			</result>
+			<result name="error">/report/error.json</result>
+		</action>
+		
+		<action name="showAudienceInterestList" class="listCproAudiencection" method="ajaxInterestAudienceList">
+			<interceptor-ref name="reportStack" />
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+						
+			<result name="success" type="json">
+  				<param name="root">jsonObject</param>
+			</result>
+			<result name="error">/report/error.json</result>
+		</action>
+		
+		<!-- 受众分析结束 -->
+		
+		
+		<!-- added by genglei01 in cpweb-492 受众组合详情页KT子报表 start -->
+		<action name="keywordPackList" class="listGroupPackDetailAction" method="ajaxPackKtList">
+			<interceptor-ref name="reportStack" />
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+						
+			<result name="success" type="json">
+  				<param name="root">jsonObject</param>
+			</result>
+			<result name="error">/report/error.json</result>
+		</action>
+
+		<action name="downloadKeywordPackList" class="listGroupPackDetailAction" method="downloadPackKtList">
+			<interceptor-ref name="reportParamDigestInterceptor" />
+            <interceptor-ref name="reportStack">
+                <param name="loginValidator.jsonEnabled">false</param>
+                <param name="jsonWorkflow.enabled">false</param>
+                <param name="privilegeWorkflow.jsonEnabled">false</param>
+            </interceptor-ref>
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="downloadExceptionHandler" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+			
+            <result name="success" type="stream">
+                <param name="inputName">inputStream</param>
+                <param name="contentType">
+                    application/vnd.ms-excel
+                </param>
+                <param name="contentDisposition">
+                    attachment;filename="${fileName}"
+                </param>
+                <param name="contentLength">${fileSize}</param>
+                <param name="bufferSize">1024</param>   
+            </result>
+            <result name="error" type="ctResult" >
+                <param name="contentParameter">content</param>
+                <param name="contentType">text/html</param>
+            </result>
+            <result name="input" type="ctResult" >
+                <param name="contentParameter">content</param>
+                <param name="contentType">text/html</param>
+            </result>
+        </action>
+
+		<action name="deleteAllKeywordPack" class="listGroupPackDetailAction" method="deleteAllPackKt">
+            <interceptor-ref name="reportStack" />
+            <interceptor-ref name="reportPrivilegeInterceptor" />
+            <interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+			
+			<result name="success" type="redirect">
+				${beidouBasePath}/cprogroup/deletePackKeyword.action?userId=${userId}&amp;tokenId=${token}
+			</result>
+			<result name="error" type="json">
+				<param name="root">jsonObject</param>
+			</result>
+		</action>
+		
+		<action name="modKeywordPackPatternTypeAll" class="listGroupPackDetailAction" method="modPackKtPatternTypeAll">
+            <interceptor-ref name="reportStack" />
+            <interceptor-ref name="reportPrivilegeInterceptor" />
+            <interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+			
+			<result name="success" type="redirect">
+				${beidouBasePath}/cprogroup/modMultiPackKeyword.action?userId=${userId}&amp;tokenId=${token}
+			</result>
+			<result name="error" type="json">
+				<param name="root">jsonObject</param>
+			</result>
+		</action>
+		<!-- added by genglei01 in cpweb-492 受众组合详情页KT子报表 end -->
+		
+		
+		<!-- added by genglei01 in cpweb-492 受众组合详情页IT子报表 begin -->
+		<action name="shownInterestPackList" class="listGroupPackDetailAction" method="ajaxShownPackItList">
+			<interceptor-ref name="reportStack" />
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+						
+			<result name="success" type="json">
+  				<param name="root">jsonObject</param>
+			</result>
+			<result name="error">/report/error.json</result>
+		</action>
+		
+		<action name="downloadShownInterestPackList" class="listGroupPackDetailAction" method="downloadShownPackItList">
+			<interceptor-ref name="reportParamDigestInterceptor" />
+            <interceptor-ref name="reportStack">
+                <param name="loginValidator.jsonEnabled">false</param>
+                <param name="jsonWorkflow.enabled">false</param>
+                <param name="privilegeWorkflow.jsonEnabled">false</param>
+            </interceptor-ref>
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="downloadExceptionHandler" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+			
+            <result name="success" type="stream">
+                <param name="inputName">inputStream</param>
+                <param name="contentType">
+                    application/vnd.ms-excel
+                </param>
+                <param name="contentDisposition">
+                    attachment;filename="${fileName}"
+                </param>
+                <param name="contentLength">${fileSize}</param>
+                <param name="bufferSize">1024</param>   
+            </result>
+            <result name="error" type="ctResult" >
+                <param name="contentParameter">content</param>
+                <param name="contentType">text/html</param>
+            </result>
+            <result name="input" type="ctResult" >
+                <param name="contentParameter">content</param>
+                <param name="contentType">text/html</param>
+            </result>
+        </action>
+        
+		<action name="chosenInterestPackList" class="listGroupPackDetailAction" method="ajaxChosenPackItList">
+			<interceptor-ref name="reportStack" />
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+						
+			<result name="success" type="json">
+  				<param name="root">jsonObject</param>
+			</result>
+			<result name="error">/report/error.json</result>
+		</action>
+		
+		<action name="downloadChosenInterestPackList" class="listGroupPackDetailAction" method="downloadChosenPackItList">
+			<interceptor-ref name="reportParamDigestInterceptor" />
+            <interceptor-ref name="reportStack">
+                <param name="loginValidator.jsonEnabled">false</param>
+                <param name="jsonWorkflow.enabled">false</param>
+                <param name="privilegeWorkflow.jsonEnabled">false</param>
+            </interceptor-ref>
+			<interceptor-ref name="reportPrivilegeInterceptor" />
+			<interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="downloadExceptionHandler" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+			
+            <result name="success" type="stream">
+                <param name="inputName">inputStream</param>
+                <param name="contentType">
+                    application/vnd.ms-excel
+                </param>
+                <param name="contentDisposition">
+                    attachment;filename="${fileName}"
+                </param>
+                <param name="contentLength">${fileSize}</param>
+                <param name="bufferSize">1024</param>   
+            </result>
+            <result name="error" type="ctResult" >
+                <param name="contentParameter">content</param>
+                <param name="contentType">text/html</param>
+            </result>
+            <result name="input" type="ctResult" >
+                <param name="contentParameter">content</param>
+                <param name="contentType">text/html</param>
+            </result>
+        </action>
+        
+		<action name="deleteAllInterestPack" class="listGroupPackDetailAction" method="deleteAllPackIt">
+            <interceptor-ref name="reportStack" />
+            <interceptor-ref name="reportPrivilegeInterceptor" />
+            <interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+			<!--
+			<result name="success" type="json">
+				<param name="root">jsonObject</param>
+			</result> -->
+			<result name="success" type="redirect">
+				${beidouBasePath}/cprogroup/removeAllGroupIT.action?userId=${userId}&amp;tokenId=${token}
+			</result>
+			<result name="error" type="json">
+				<param name="root">jsonObject</param>
+			</result>
+		</action>
+		<!-- added by genglei01 in cpweb-492 受众组合详情页IT子报表 end-->
+
+		<!-- added by linan at 20140723 -->
+		<action name="getTodayTaxStat" class="todayTaxStatAction">
+			<interceptor-ref name="reportStack" />
+            <interceptor-ref name="reportPrivilegeInterceptor" />
+            <interceptor-ref name="dataPrivilegeStack" />
+			<interceptor-ref name="reportTimeConsumeInterceptor" />
+			
+			<result name="success" type="json">
+				<param name="root">jsonObject</param>
+			</result>
+		</action>
+	</package>
+</struts>	

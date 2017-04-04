@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+        "http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+	<package name="logout" namespace="/logout"
+		extends="beidou-default">
+
+		<action name="logout" method="logout" class="logoutAction">
+			<result type="redirect">${ucLogoutUrl}</result>
+		</action>
+		<action name="goToShifen" method="goToShifen"
+			class="logoutAction">
+			<result type="redirect">http://www2.baidu.com</result>
+		</action>
+	</package>
+
+
+	<package name="index" namespace="/" extends="beidou-default">
+
+		<interceptors>
+			<interceptor name="shifenToBeidouValidator"
+				class="com.baidu.beidou.user.web.interceptor.ShifenToBeidouInterceptor" />
+			<!-- 自定义拦截器堆栈  -->
+			<interceptor-stack name="loginStack">
+		 		<interceptor-ref name="shifenToBeidouValidator" />  
+				<interceptor-ref name="defaultStack" />
+				<interceptor-ref name="visitorInterceptor" />
+				<interceptor-ref name="userIdInterceptor" />
+				<interceptor-ref name="testLogInterceptor">
+					<param name="excludeProperties">log,.*Mgr</param>
+					<param name="includeProperties">none</param>
+				</interceptor-ref>
+			</interceptor-stack>
+		</interceptors>
+
+		<default-interceptor-ref name="loginStack" />
+
+		<action name="shifenLogin" method="login"
+			class="com.baidu.beidou.user.web.action.ShifenLoginAction">
+			<interceptor-ref name="defaultStack"></interceptor-ref>
+			<result type="redirect" name="back">
+				${fromurl}
+			</result>
+			<result type="redirectAction" name="index">
+				<param name="actionName">
+					index?requestId=${requestId}
+				</param>
+			</result>
+			<result name="chooseUser" type="dispatcher">
+				<param name="location">/continue.jsp</param>
+			</result>
+		</action>
+
+		<action name="index" method="dispatch" class="dispatchAction">
+			<result name="normal" type="redirectAction">
+				<param name="actionName">index</param>
+				<param name="namespace">/account</param>
+			</result>
+			<result name="saler" type="redirectAction">
+				<param name="actionName">saleinfo</param>
+				<param name="namespace">/salemanager</param>
+			</result>
+			<result name="auditer" type="redirectAction">
+				<param name="actionName">auditinfo</param>
+				<param name="namespace">/auditmanager</param>
+			</result>
+			<result name="supersaler" type="redirectAction">
+				<param name="actionName">superCustomList</param>
+				<param name="namespace">/salemanager</param>
+			</result>
+		</action>
+		
+		<!-- add by zengyunfeng @beidou1.1.3 记录用户行为-->
+		<action name="logUserAction" class="userActionLogAction"
+			method="execute">
+			<interceptor-ref name="beidouStack">
+				<param name="privilegeWorkflow.jsonEnabled">true</param>
+			</interceptor-ref>
+
+			<result name="success" type="json">
+				<param name="root">jsonObject</param>
+				<param name="ignoreHierarchy">false</param>
+			</result>
+		</action>
+	</package>
+</struts>

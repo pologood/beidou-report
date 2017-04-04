@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+
+<!--
+	- Application context definition for "springapp" DispatcherServlet.
+-->
+
+<beans>
+	<!-- base apiProxy -->
+	<bean id="apiProxyBase" class="org.springframework.aop.framework.ProxyFactoryBean" abstract="true" />
+	
+    <bean id="reportServiceProxy"  parent="apiProxyBase">
+        <property name="target" ref="reportRpcService"></property>
+        <property name="proxyInterfaces" value="com.baidu.beidou.report.service.ReportRpcService"></property>
+    </bean>
+    
+    <bean class="com.baidu.rpc.server.RpcExporter" scope="singleton">
+        <property name="serviceInterfaceName" value="com.baidu.beidou.report.service.ReportRpcService"/>
+        <property name="serviceBean">
+            <ref bean="reportServiceProxy"/>
+        </property>
+    </bean>
+	
+   	<bean id="reportRpcService" class="com.baidu.beidou.report.service.impl.ReportRpcServiceImpl">
+   		<property name="reportDao">
+   			<ref bean="dorisDao"/>
+   		</property>
+   		<property name="reportCacheDao">
+   			<ref bean="reportCacheDao"/>
+   		</property>
+   	</bean>
+</beans>

@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+        "http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+	<constant name="struts.allowed.action.names" value="[a-zA-Z0-9._!/\-]*"></constant>
+	<package name="beidou-default" extends="struts-default">
+
+		<result-types>
+			<result-type name="json" class="org.apache.struts2.json.JSONResult"/>
+			<result-type name="chain-with-param" class="com.baidu.beidou.util.web.result.ActionChainWithparamResult"/>				
+			<result-type name="firekylin"
+					class="com.baidu.firekylin.XWork2Support">
+					<param name="config.autocompile">true</param>
+					<param name="config.contentType">
+						text/html;charset=UTF-8
+					</param>
+					<param name="config['http://www.xidea.org/ns/lite/autoform']">form</param>
+			</result-type>		
+			<result-type name="ctResult" class="com.baidu.beidou.util.web.result.ContentTypedResult" />
+		</result-types>
+
+		<!-- 自定义拦截器 -->
+		<interceptors>
+			<interceptor name="firekylinPage"
+				class="com.baidu.beidou.util.web.interceptor.FirekylinPageInterceptor" />
+			<interceptor name="token"
+				class="com.baidu.beidou.util.web.interceptor.MemcacheTokenInterceptor" />
+				
+			<!-- 登录验证的拦截器 -->
+			<interceptor name="loginValidator"
+				class="com.baidu.beidou.user.web.interceptor.LoginInterceptor" />
+			<interceptor name="operatePrivilegeValidator"
+				class="com.baidu.beidou.user.web.interceptor.OperatePrivilegeInterceptor">
+			</interceptor>
+			<interceptor name="userIdInterceptor"
+				class="com.baidu.beidou.user.web.interceptor.SetUserIdInterceptor">
+			</interceptor>
+			<interceptor name="visitorInterceptor"
+				class="com.baidu.beidou.user.web.interceptor.SetVisitorInterceptor">
+			</interceptor>
+			<interceptor name="userPrivilegeInterceptor"
+				class="com.baidu.beidou.user.web.interceptor.UserPrivilegeInterceptor">
+			</interceptor>
+			<interceptor name="visitLogInterceptor"
+				class="com.baidu.beidou.util.web.interceptor.VisitLogInterceptor">
+			</interceptor>
+			<interceptor name="json" class="com.googlecode.jsonplugin.JSONInterceptor" />
+			<interceptor name="jsonWorkflow" class="com.baidu.beidou.util.web.interceptor.JSONWorkflowInterceptor" />
+			<interceptor name="privilegeWorkflow" class="com.baidu.beidou.user.web.interceptor.PrivilegeWorkflowInterceptor" />
+			<interceptor name="userIdPrivilegeInterceptor" class="com.baidu.beidou.user.web.interceptor.UserIdInterceptor" />
+			<!-- 记录操作记录的拦截器 -->
+			<interceptor name="optHistoryInterceptor" class="com.baidu.beidou.tool.web.interceptor.OptHistoryInterceptor" />
+			<!-- 同步本地和远程session的拦截器 -->
+			<interceptor name="synSessionInterceptor" class="com.baidu.beidou.user.web.interceptor.SessionInterceptor" />
+			<!-- 设置用户名的拦截器 -->
+			<interceptor name="userNameInterceptor" class="com.baidu.beidou.user.web.interceptor.UserNameInterceptor" />
+			
+			<interceptor name="testLogInterceptor" class="com.baidu.beidou.util.web.interceptor.TestLogInterceptor" />
+			<interceptor name="beidouExceptionInterceptor"
+				class="com.baidu.beidou.util.web.interceptor.DefaultExceptionInterceptor" />
+			<!-- 小流量实验拦截器 -->
+			<interceptor name="setExperimentCookieInterceptor"
+				class="com.baidu.beidou.user.web.interceptor.SetExperimentCookieInterceptor" />
+			
+			<!-- threadlocal中放userId的拦截器 -->
+			<interceptor name="setUserIdToContextInterceptor" class="com.baidu.beidou.user.web.interceptor.UserIdContextInterceport" />
+			
+			<!-- 北斗定义的覆盖Struts2自带的ParametersInterceptor拦截器  -->
+			<interceptor name="beidouParams" class="com.baidu.beidou.util.web.interceptor.BeidouCustomizeParametersInterceptor" />
+			
+			<!-- 多web服务器请求强制保持顺序拦截器 -->	
+			<interceptor name="requestKeepOrderInterceptor"
+				class="com.baidu.beidou.util.web.interceptor.RequestKeepOrderInterceptor">
+			</interceptor>
+			
+			<!-- 自定义拦截器堆栈 -->
+			
+			<interceptor-stack name="dataPrivilegeStack">
+				<interceptor-ref name="userPrivilegeInterceptor"></interceptor-ref>
+				<interceptor-ref name="privilegeWorkflow">
+				</interceptor-ref>
+                <interceptor-ref name="beidouExceptionInterceptor" /> 
+
+			</interceptor-stack>
+			<!-- JSON validation stack -->
+            <interceptor-stack name="jsonValidationWorkflowStack">
+                <interceptor-ref name="exception"/>
+                <interceptor-ref name="alias"/>
+                <interceptor-ref name="servletConfig"/>
+                <interceptor-ref name="prepare"/>
+                <interceptor-ref name="i18n"/>
+                <interceptor-ref name="chain"/>
+                <interceptor-ref name="debugging"/>
+                <interceptor-ref name="profiling"/>
+                <interceptor-ref name="scopedModelDriven"/>
+                <interceptor-ref name="modelDriven"/>
+                <interceptor-ref name="fileUpload"/>
+                <interceptor-ref name="checkbox"/>
+                <interceptor-ref name="staticParams"/>
+                <interceptor-ref name="beidouParams">
+                <!-- 防止参数中加入'\'带来安全问题 -->
+                  <param name="excludeParams">.*[\\(\\)#@'].*,.*classLoader.*,^class\..*,^dojo\..*,^struts\..*,^session\..*,^request\..*,^application\..*,^servlet(Request|Response)\..*,^parameters\..*,^action:.*,^method:.*,.*ClassLoader.*,^Class\..*,^Dojo\..*,^Struts\..*,^Session\..*,^Request\..*,^Application\..*,^Servlet(Request|Response)\..*,^Parameters\..*,^Action:.*,^Method:.*</param>
+                </interceptor-ref>
+                <interceptor-ref name="conversionError"/>
+                <interceptor-ref name="setUserIdToContextInterceptor" />
+                <interceptor-ref name="validation">
+                    <param name="excludeMethods">input,back,cancel,browse</param>
+                </interceptor-ref>                
+                <interceptor-ref name="jsonWorkflow">
+                </interceptor-ref>
+            </interceptor-stack>    
+            
+            <interceptor-stack name="defaultStack">
+                <interceptor-ref name="exception"/>
+                <interceptor-ref name="alias"/>
+                <interceptor-ref name="servletConfig"/>
+                <interceptor-ref name="i18n"/>
+                <interceptor-ref name="prepare"/>
+                <interceptor-ref name="chain"/>
+                <interceptor-ref name="debugging"/>
+                <interceptor-ref name="scopedModelDriven"/>
+                <interceptor-ref name="modelDriven"/>
+                <interceptor-ref name="fileUpload"/>
+                <interceptor-ref name="checkbox"/>
+                <interceptor-ref name="multiselect"/>
+                <interceptor-ref name="staticParams"/>
+                <interceptor-ref name="actionMappingParams"/>
+                <interceptor-ref name="beidouParams">
+                  <param name="excludeParams">.*[\\(\\)#@'].*,.*classLoader.*,^class\..*,^dojo\..*,^struts\..*,^session\..*,^request\..*,^application\..*,^servlet(Request|Response)\..*,^parameters\..*,^action:.*,^method:.*,.*ClassLoader.*,^Class\..*,^Dojo\..*,^Struts\..*,^Session\..*,^Request\..*,^Application\..*,^Servlet(Request|Response)\..*,^Parameters\..*,^Action:.*,^Method:.*</param>
+                </interceptor-ref>
+                <interceptor-ref name="conversionError"/>
+                <interceptor-ref name="setUserIdToContextInterceptor" />
+                <interceptor-ref name="validation">
+                    <param name="excludeMethods">input,back,cancel,browse</param>
+                </interceptor-ref>
+                 <interceptor-ref name="jsonWorkflow"/>
+            </interceptor-stack>
+            
+             <interceptor-stack name="prepareWorkflowStack">
+                <interceptor-ref name="exception"/>
+                <interceptor-ref name="alias"/>
+               	<interceptor-ref name="beidouParams">
+               		<param name="excludeParams">.*[\\(\\)#@'].*,.*classLoader.*,^class\..*,^dojo\..*,^struts\..*,^session\..*,^request\..*,^application\..*,^servlet(Request|Response)\..*,^parameters\..*,^action:.*,^method:.*,.*ClassLoader.*,^Class\..*,^Dojo\..*,^Struts\..*,^Session\..*,^Request\..*,^Application\..*,^Servlet(Request|Response)\..*,^Parameters\..*,^Action:.*,^Method:.*</param>
+               	</interceptor-ref>
+                <interceptor-ref name="servletConfig"/>
+                <interceptor-ref name="prepare"/>
+                <interceptor-ref name="i18n"/>
+                <interceptor-ref name="chain"/>
+                <interceptor-ref name="debugging"/>
+                <interceptor-ref name="profiling"/>
+                <interceptor-ref name="scopedModelDriven"/>
+                <interceptor-ref name="modelDriven"/>
+                <interceptor-ref name="fileUpload"/>
+                <interceptor-ref name="checkbox"/>
+                <interceptor-ref name="staticParams"/>
+                <interceptor-ref name="beidouParams">
+                <!-- 防止参数中加入'\'带来安全问题 -->
+                  <param name="excludeParams">.*[\\(\\)#@'].*,.*classLoader.*,^class\..*,^dojo\..*,^struts\..*,^session\..*,^request\..*,^application\..*,^servlet(Request|Response)\..*,^parameters\..*,^action:.*,^method:.*,.*ClassLoader.*,^Class\..*,^Dojo\..*,^Struts\..*,^Session\..*,^Request\..*,^Application\..*,^Servlet(Request|Response)\..*,^Parameters\..*,^Action:.*,^Method:.*</param>
+                </interceptor-ref>
+                <interceptor-ref name="conversionError"/>
+                <interceptor-ref name="setUserIdToContextInterceptor"/>
+                <interceptor-ref name="validation">
+                    <param name="excludeMethods">input,back,cancel,browse</param>
+                </interceptor-ref>                
+                <interceptor-ref name="jsonWorkflow">
+                </interceptor-ref>
+            </interceptor-stack>  
+            
+            
+            <interceptor-stack name="loginStack">
+            	<interceptor-ref name="loginValidator"/> 
+				<interceptor-ref name="privilegeWorkflow"/>
+            </interceptor-stack>
+            
+            <interceptor-stack name="privilegeStack">
+            	<interceptor-ref name="operatePrivilegeValidator"/>
+				<interceptor-ref name="privilegeWorkflow"/>
+				<interceptor-ref name="visitorInterceptor"/>
+				<interceptor-ref name="userIdInterceptor"/>
+				<interceptor-ref name="testLogInterceptor">
+					<param name="excludeProperties">log,.*Mgr</param>
+					<param name="includeProperties">none</param>
+				</interceptor-ref>
+				<interceptor-ref name="visitLogInterceptor"/>
+            </interceptor-stack>
+            
+            <interceptor-stack name="beidouStack">
+            	<interceptor-ref name="loginStack" />
+            	<interceptor-ref name="setExperimentCookieInterceptor" />	
+				<interceptor-ref name="jsonValidationWorkflowStack" />
+				
+				<interceptor-ref name="privilegeStack"/>
+				<!--<interceptor-ref name="userNameInterceptor"/>--> 
+				<interceptor-ref name="beidouExceptionInterceptor"/>
+				<interceptor-ref name="beidouParams">
+               		<param name="excludeParams">.*[\\(\\)#@'].*,.*classLoader.*,^class\..*,^dojo\..*,^struts\..*,^session\..*,^request\..*,^application\..*,^servlet(Request|Response)\..*,^parameters\..*,^action:.*,^method:.*,.*ClassLoader.*,^Class\..*,^Dojo\..*,^Struts\..*,^Session\..*,^Request\..*,^Application\..*,^Servlet(Request|Response)\..*,^Parameters\..*,^Action:.*,^Method:.*</param> 
+               	</interceptor-ref>
+			</interceptor-stack> 
+			
+			<!-- 待parepare的拦截器对照 -->
+			 <interceptor-stack name="beidouPrepareStack">
+				<interceptor-ref name="loginStack" />
+				<interceptor-ref name="prepareWorkflowStack" />
+				<interceptor-ref name="privilegeStack"/> 
+				<!--<interceptor-ref name="userNameInterceptor"/> -->
+			</interceptor-stack>             
+            
+		</interceptors>
+
+		<!-- 重定义默认拦截器堆栈 -->
+		<default-interceptor-ref name="beidouStack" />
+		<global-results>
+			<result name="login" type="redirect">
+				http://www2.baidu.com
+			</result>
+			<result name="noPermission" type="dispatcher">
+				/noPermission.jsp
+			</result>
+			<result name="error">/error.jsp</result>
+			<result name="invalid.token">/sessionerror.jsp</result>
+			<!-- 小流量重发请求结果 -->
+			<result name="expRedirect" type="redirect">
+				${expRedirectUrl}
+			</result>
+			<result name="system_error_json" type="redirectAction">
+				<param name="actionName">jsonError</param>
+				<param name="namespace">/</param>
+				<param name="status">1</param>
+				<param name="messageText">errors.systemError</param>
+			</result>
+			
+			<result name="no_login_json" type="redirectAction">
+				<param name="actionName">jsonError</param>
+				<param name="namespace">/</param>
+				<param name="status">127</param>
+				<param name="messageText">errors.noLogin</param>
+			</result>
+			<result name="no_auth_json" type="redirectAction">
+				<param name="actionName">jsonError</param>
+				<param name="namespace">/</param>
+				<param name="status">126</param>
+				<param name="messageText">errors.noAuth</param>
+			</result>
+			<result name="no_found_json" type="redirectAction">
+				<param name="actionName">jsonError</param>
+				<param name="namespace">/</param>
+				<param name="status">404</param>
+				<param name="messageText">errors.noFound</param>
+			</result>
+		</global-results>
+		
+		<action name="jsonError" class="com.baidu.beidou.util.web.action.JsonError">
+			<interceptor-ref name="params">
+             	<param name="excludeParams">.*[\\/\(\)#@'].*,.*classLoader.*,^class\..*,^dojo\..*,^struts\..*,^session\..*,^request\..*,^application\..*,^servlet(Request|Response)\..*,^parameters\..*,^action:.*,^method:.*,.*ClassLoader.*,^Class\..*,^Dojo\..*,^Struts\..*,^Session\..*,^Request\..*,^Application\..*,^Servlet(Request|Response)\..*,^Parameters\..*,^Action:.*,^Method:.*</param>
+             </interceptor-ref>
+			<result name="success" type="json">
+				<param name="root">jsonObject</param>
+			</result>
+		</action>
+		
+		
+	</package>
+	<include file="com/baidu/beidou/report/web/action/report.xml" />
+		
+</struts>

@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app id="WebApp_9" version="2.4"
+	xmlns="http://java.sun.com/xml/ns/j2ee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+	<display-name>report2</display-name>
+	
+	<context-param>
+		<param-name>log4jConfigLocation</param-name>
+		<param-value>/WEB-INF/classes/log4j.properties</param-value>
+	</context-param>
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>classpath*:applicationContext.xml</param-value>
+	</context-param>
+	<context-param>
+		<param-name>propertiesLocation</param-name>
+		<param-value>
+			/WEB-INF/classes/com/baidu/beidou/report/package.properties
+		</param-value>
+	</context-param>
+
+	<filter>
+		<filter-name>ETagFilter</filter-name>
+		<filter-class>com.baidu.beidou.report.web.filter.ETagFilter</filter-class>
+		<init-param>
+			<param-name>disabled</param-name>
+			<param-value>false</param-value>
+		</init-param>
+	</filter>
+	<filter>
+		<filter-name>struts2</filter-name>
+		<filter-class>
+			com.baidu.beidou.util.web.filter.BeidouFilter 
+		</filter-class>
+        <init-param>
+                <param-name>excludeServlets</param-name>
+                <param-value>/rpc/.*,/api/.*</param-value>
+        </init-param>
+        <init-param>
+        	<param-name>prefixes</param-name>
+        	<param-value>action:,redirect:,redirectAction:</param-value>
+    	</init-param>  
+	</filter>
+	<filter-mapping>
+		<filter-name>ETagFilter</filter-name>
+		<url-pattern>/report/planList.action</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>ETagFilter</filter-name>
+		<url-pattern>/report/groupList.action</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>ETagFilter</filter-name>
+		<url-pattern>/report/unitList.action</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>struts2</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<listener>
+		<listener-class>
+			org.springframework.web.context.ContextLoaderListener
+		</listener-class>
+	</listener>
+	<listener>
+		<listener-class>
+			com.baidu.beidou.report.web.listener.InitSystemListener
+		</listener-class>
+	</listener>
+
+	<servlet>
+		<servlet-name>remoting</servlet-name>
+		<servlet-class>
+			org.springframework.web.servlet.DispatcherServlet
+		</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>remoting</servlet-name>
+		<url-pattern>/rpc/*</url-pattern>
+	</servlet-mapping>
+
+    <servlet>
+        <display-name>mcpack-rpc servlet</display-name>
+        <servlet-name>mcpackRpcServlet</servlet-name>
+        <servlet-class>com.baidu.rpc.server.RpcServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>mcpackRpcServlet</servlet-name>
+        <url-pattern>/api/*</url-pattern>
+    </servlet-mapping>
+	<error-page>
+		<error-code>404</error-code>
+		<location>/notFound.jsp</location>
+	</error-page>
+	<error-page>
+		<error-code>500</error-code>
+		<location>/systemBusy.jsp</location>
+	</error-page>
+	<jsp-config>
+        <taglib>
+            <taglib-uri>/struts-tags</taglib-uri>
+            <taglib-location>/WEB-INF/tld/struts-tags.tld</taglib-location>
+        </taglib>
+	</jsp-config>
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>
+				beidou application
+			</web-resource-name>
+			<url-pattern>/rpc/*</url-pattern>
+		</web-resource-collection>
+		<web-resource-collection>
+			<web-resource-name>
+				beidou-report mcpack rpc
+			</web-resource-name>
+			<url-pattern>/api/*</url-pattern>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>ctclient</role-name>
+		</auth-constraint>
+	</security-constraint>
+	<login-config>
+		<auth-method>BASIC</auth-method>
+		<realm-name>Tomcat Supported Realm</realm-name>
+	</login-config>
+	<security-role>
+		<description>
+			An role defined in "conf/tomcat-users.xml"
+		</description>
+		<role-name>ctclient</role-name>
+	</security-role>
+</web-app>

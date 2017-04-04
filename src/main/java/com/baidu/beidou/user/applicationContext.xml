@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+
+<!--
+	- Application context definition for "springapp" DispatcherServlet.
+-->
+
+<beans>
+	<bean id="propertyConfigurerUc"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="ignoreUnresolvablePlaceholders" value="true"/>
+		<property name="order" value="101" />  	<!-- 设置优先级，将应用优先级较高(值越小，优先级越高)的属性值 -->
+		<property name="locations">
+			<list>
+				<value>classpath*:com/baidu/beidou/user/constant/shifen_login.properties</value>
+			</list>
+		</property>
+	</bean>
+	
+	<bean class="com.baidu.beidou.user.util.loginvalidate.MemcacheConfigure">
+		<property name="MASTER_MEMCACHE_SERVER" value="${MASTER_MEMCACHE_SERVER}"></property>
+		<property name="SLAVE_MEMCACHE_SERVER" value="${SLAVE_MEMCACHE_SERVER}"></property>
+		<property name="MEMCOOKIE_NAME" value="${MEMCOOKIE_NAME}"></property>
+		<property name="operation_timeout" value="${operation_timeout}"></property>
+		<property name="read_buffer_size" value="${read_buffer_size}"></property>
+		<property name="op_queue_len" value="${op_queue_len}"></property>
+		<property name="expire" value="${expire}"></property>
+		<property name="UC_SESSION_SERVERS" value="${UC_SESSION_SERVERS}"></property>
+		<property name="UC_SERVER_TIMEOUT" value="${UC_SERVER_TIMEOUT}"></property>
+		<property name="UC_BEIDOU_APPID" value="${UC_BEIDOU_APPID}"></property>
+		<property name="UC_BEIDOU_APPKEY" value="${UC_BEIDOU_APPKEY}"></property>
+		<property name="UC_BEIDOU_COOKIE_DOMAIN" value="${UC_BEIDOU_COOKIE_DOMAIN}"></property>
+		<property name="UC_LOGIN_URL" value="${UC_LOGIN_URL}"></property>
+		<property name="UC_JUMP_URL" value="${UC_JUMP_URL}"></property>
+		<property name="UC_LOGOUT_URL" value="${UC_LOGOUT_URL}"></property>
+	</bean>
+	
+		<!-- add by zengyunfeng @beidou1.1.3 记录用户行为-->
+	<bean name="userActionLogAction" 
+		class="com.baidu.beidou.user.web.action.UserActionLogAction" 
+		scope="prototype">
+	</bean>
+	
+</beans>

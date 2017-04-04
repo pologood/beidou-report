@@ -1,0 +1,15 @@
+---
+END:
+  - 'EXECUTE_CMD:cd /home/work/local/tomcat/bin && ./tomcat_control start'
+  - "EXECUTE_CMD:echo \"end of execute\""
+  - UNBLOCK_MACHINE
+MAIN:
+  - DERIVE_CONF
+  - CALL_CONTROL:stop
+  - BACKUP_AND_DEPLOY:TRUE
+  - CALL_CONTROL:start
+PREPARE:
+  - BLOCK_MACHINE
+  - "EXECUTE_CMD:echo \"tomcat stop __________________________\""
+  - 'EXECUTE_CMD:cd /home/work/local/tomcat/bin && ./tomcat_control stop'
+

@@ -1,0 +1,459 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+
+<!--
+	- Application context definition for "springapp" DispatcherServlet.
+-->
+
+<beans>
+   	
+	<bean id="paramConfig" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="ignoreUnresolvablePlaceholders" value="true"/>
+		<property name="order" value="101" />
+		<property name="locations">
+			<list>
+				<value>classpath*:paramConfig.properties</value>
+			</list>
+		</property>
+	</bean>
+	
+   	<bean id="reportCacheService" class="com.baidu.beidou.report.service.impl.ReportCacheServiceImpl">
+   		<property name="reportCacheDao">
+   			<ref bean="reportCacheDao"/>
+   		</property>
+   	</bean>
+   	
+	<bean class="com.baidu.beidou.report.constant.ReportWebConstants">
+		<property name="FRONT_SORT_THRESHOLD"
+			value="${ReportWebConstants.FRONT_SORT_THRESHOLD}" />
+		
+		<property name="MAX_GROUP_COUNT_IN_SITEVIEW"
+			value="${ReportWebConstants.MAX_GROUP_COUNT_IN_SITEVIEW}" />
+		
+		<property name="showSecondDomainSiteList"
+			value="${ReportWebConstants.showSecondDomainSiteList}" />
+		
+		<property name="KEYWORD_STATDATA_MERGED"
+			value="${ReportWebConstants.KEYWORD_STATDATA_MERGED}" />
+	</bean>
+   	<bean class="com.baidu.beidou.report.constant.ReportCache">
+        <property name="cacheEnable">
+            <value>${ReportCache.cacheEnable}</value>
+        </property>
+        <property name="expireTime">
+            <value>${ReportCache.expireTime}</value>
+        </property>
+   	</bean>
+   	
+	<bean id="aotDriver" class="com.baidu.beidou.util.McpackProxyFactoryBean">
+    	<property name="serviceInterface">
+			<value>com.baidu.beidou.report.service.BeidouAotService</value>	
+		</property>
+		<property name="serviceUrl" value="${BD_AOT_URL}" />
+		<property name="servers" value="${BD_AOT_SERVER}" />
+		<property name="encoding" value="UTF-8" />
+		<property name="connectionTimeout" value="${AOT.connectionTimeout}" />
+		<property name="readTimeout" value="${AOT.readTimeout}" />
+		<property name="hasHeaders" value="false" />
+	</bean>
+   	<bean id="reportCproPlanMgr" class="com.baidu.beidou.report.service.impl.ReportCproPlanMgrImpl">
+   		<property name="reportCproPlanDao">
+   			<ref bean="reportCproPlanDao" />
+   		</property>
+   		<property name="transReportFacade" ref="transReportFacade"/>
+		<property name="uvDataService">
+			<ref bean="uvDataService"/>
+		</property>
+		<property name="holmesDataService">
+			<ref bean="holmesDataService"/>
+		</property>
+		<property name="uvReportFacade">
+			<ref bean="uvReportFacade"/>
+		</property>
+		<property name="reportFacade">
+			<ref bean="reportFacade"/>
+		</property>
+		<property name="transDataService">
+			<ref bean="transDataService"/>
+		</property>
+   	</bean>
+   	<bean id="reportCproGroupMgr" class="com.baidu.beidou.report.service.impl.ReportCproGroupMgrImpl">
+   		<property name="reportCproGroupDao">
+   			<ref bean="reportCproGroupDao" />
+   		</property>
+   		<property name="cproGroupDao" ref="cproGroupDao"/>
+   		<property name="uvDataService" ref="uvDataService"/>
+   		<property name="holmesDataService" ref="holmesDataService"/>
+   		<property name="uvReportFacade" ref="uvReportFacade"/>
+   		<property name="reportFacade" ref="reportFacade"/>
+   		<property name="transReportFacade" ref="transReportFacade"/>
+   		<property name="transDataService" ref="transDataService"/>
+   	</bean>
+   	<bean id="reportCproUnitMgr" class="com.baidu.beidou.report.service.impl.ReportCproUnitMgrImpl">
+   		<property name="reportCproUnitDao">
+   			<ref bean="reportCproUnitDao" />
+   		</property>
+   		<property name="unitMgr">
+			<ref bean="unitMgr" />
+		</property>
+		<property name="smartIdeaService">
+			<ref bean="smartIdeaService" />
+		</property>
+   	</bean>
+   	
+   	<bean id="transReportFacade" class="com.baidu.beidou.report.facade.impl.TransReportFacadeImpl">
+   		<property name="holmesMgr">
+   			<ref bean="holmesMgr" />
+   		</property>
+   		<property name="transDataService">
+   		    <ref bean="transDataService"/>
+   		</property>
+   		<property name="transDataReadyTime" value="${ReportFacadeImpl.transDataReadyTime}" />
+   		<property name="signFlagMemcacheExpireTimeInMinute" value="10" />
+   	</bean>
+   	
+   	<!--  
+   	<bean id="unitCustomFacade" class="com.baidu.beidou.report.facade.impl.UnitCustomReportFacadeImpl">
+   		<property name="cproPlanMgr">
+   			<ref bean="cproPlanMgr" />
+   		</property>
+   		<property name="cproGroupMgr">
+   		    <ref bean="cproGroupMgr"/>
+   		</property>
+   		<property name="cproUnitMgr">
+   		    <ref bean="unitMgr"/>
+   		</property>
+   		<property name="statMgr">
+   		    <ref bean="statService2"/>
+   		</property>
+   		<property name="reportFacade">
+   		    <ref bean="reportFacade"/>
+   		</property>
+   		<property name="statService">
+   		    <ref bean="statService2"/>
+   		</property>
+   	</bean>
+   	
+   	<bean id="standardCustomFacade" class="com.baidu.beidou.report.facade.impl.StandardCustomReportFacadeImpl">
+   		<property name="cproPlanMgr">
+   			<ref bean="cproPlanMgr" />
+   		</property>
+   		<property name="cproGroupMgr">
+   		    <ref bean="cproGroupMgr"/>
+   		</property>
+   		<property name="statMgr">
+   		    <ref bean="statService2"/>
+   		</property>
+   		<property name="reportFacade">
+   		    <ref bean="reportFacade"/>
+   		</property>
+   		<property name="userMgr">
+   		    <ref bean="userMgr"/>
+   		</property>
+   	</bean>
+   	-->
+
+    <bean id="baseReportAction" abstract="true">
+		<!-- 此处用封装过的statservice2来处理 -->
+		<property name="aotService">
+			<ref bean="aotDriver"/>
+		</property>
+		<property name="userMgr">
+			<ref bean="userMgr"/>
+		</property>
+		<property name="userInfoMgr">
+			<ref bean="userInfoMgr"/>
+		</property>
+		<property name="transReportFacade" ref="transReportFacade"/>
+		<property name="uvDataService">
+			<ref bean="uvDataService"/>
+		</property>
+		<property name="holmesDataService">
+			<ref bean="holmesDataService"/>
+		</property>
+		<property name="uvReportFacade">
+			<ref bean="uvReportFacade"/>
+		</property>
+		<property name="reportFacade">
+			<ref bean="reportFacade"/>
+		</property>
+		<property name="transDataService">
+   		    <ref bean="transDataService"/>
+   		</property>
+	</bean>
+
+    <bean id="listPlanAction"
+		class="com.baidu.beidou.report.web.action.ListCproPlanAction"
+		parent="baseReportAction" scope="prototype">
+		<property name="reportCproPlanMgr">
+			<ref bean="reportCproPlanMgr"/>
+		</property>
+		<property name="cproPlanMgr">
+			<ref bean="cproPlanMgr"/>
+		</property>
+		<property name="cacheService">
+			<ref bean="reportCacheService"/>
+		</property>
+		<property name="mfcService">
+			<ref bean="mfcService"/>
+		</property>
+	</bean>
+	
+    <bean id="listGroupAction"
+		class="com.baidu.beidou.report.web.action.ListCproGroupAction"
+		parent="baseReportAction" scope="prototype">
+		<property name="reportCproGroupMgr">
+			<ref bean="reportCproGroupMgr"/>
+		</property>
+		<property name="cproPlanMgr">
+			<ref bean="cproPlanMgr"/>
+		</property>
+		<property name="cproGroupMgr">
+			<ref bean="cproGroupMgr"/>
+		</property>
+		<property name="cacheService">
+			<ref bean="reportCacheService"/>
+		</property>			
+	</bean>
+	
+    <bean id="listUnitAction"
+		class="com.baidu.beidou.report.web.action.ListCproUnitAction"
+		parent="baseReportAction" scope="prototype">
+		<property name="reportCproUnitMgr" ref="reportCproUnitMgr" />
+		<property name="cproPlanMgr" ref="cproPlanMgr" />
+		<property name="cproGroupMgr" ref="cproGroupMgr" />
+		<property name="unionSiteMgr" ref="unionSiteMgr" />
+		<property name="clickUrlService" ref="clickUrlService" />
+		<property name="cproUnitMgr" ref="unitMgr" />
+		<property name="wm123SiteDetailPrefix" value="${WM123.SERVER}${WM123.SITEDETAIL.PREFIX}" />
+		<property name="wm123SiteDetailSuffix" value="${WM123.SITEDETAIL.SUFFIX}" />
+        <property name="cacheService">
+			<ref bean="reportCacheService"/>
+		</property>	
+	</bean>
+	
+	<bean id="unitCustomReportAction"
+		class="com.baidu.beidou.report.web.action.UnitCustomReportAction"
+		parent="baseReportAction" scope="prototype">
+
+	</bean>
+	
+	<bean id="standardCustomReportAction"
+		class="com.baidu.beidou.report.web.action.StandardCustomReportAction"
+		parent="baseReportAction" scope="prototype">
+
+	</bean>
+	
+	<bean id="listGroupSiteAction"
+		class="com.baidu.beidou.report.web.action.ListGroupSiteAction"
+		parent="baseReportAction" scope="prototype">
+		<property name="reportCproGroupMgr" ref="reportCproGroupMgr"/>
+		<property name="siteConfigMgr" ref="groupSiteConfigMgr"/>
+		<property name="cproGroupMgr" ref="cproGroupMgr"/>
+		<property name="cproPlanMgr" ref="cproPlanMgr"/>
+        <property name="cacheService">
+			<ref bean="reportCacheService"/>
+		</property>
+	</bean>
+	
+	<bean id="listTransDataAction"
+		class="com.baidu.beidou.report.web.action.ListTransDataAction"
+		parent="baseReportAction" scope="prototype">
+		<property name="reportCproPlanMgr" ref="reportCproPlanMgr"/>
+		<property name="reportCproGroupMgr" ref="reportCproGroupMgr"/>
+		<property name="reportCproUnitMgr" ref="reportCproUnitMgr" />
+	</bean>
+	
+ 
+	<bean id="invalidCostReportAction"
+		class="com.baidu.beidou.report.web.action.InvalidCostReportAction"
+		parent="baseReportAction" scope="prototype">
+	</bean>
+
+	
+	<bean id="userAccountCustomReportAction"
+		class="com.baidu.beidou.report.web.action.UserAccountCustomReportAction"
+		parent="baseReportAction" scope="prototype">
+	</bean>
+	
+	<bean id="planCustomReportAction"
+		class="com.baidu.beidou.report.web.action.PlanCustomReportAction"
+		parent="baseReportAction" scope="prototype">
+	</bean>
+	
+	<bean id="groupCustomReportAction"
+		class="com.baidu.beidou.report.web.action.GroupCustomReportAction"
+		parent="baseReportAction" scope="prototype">
+	</bean>
+
+   	
+	<!-- CT functions -->
+	<bean id="loadSiteInfotoMemery"
+		class="com.baidu.beidou.report.task.LoadSiteInfotoMemery">
+		<property name="unionSiteMgr">
+			<ref bean="unionSiteMgr"/>
+		</property>
+	</bean>
+	<bean id="loadSiteCTTask"
+		class="com.baidu.beidou.report.task.LoadSiteCTTask">
+		<property name="task">
+			<ref bean="loadSiteInfotoMemery"/>
+		</property>
+	</bean>
+
+	<bean id="listCproGroupKtAction"
+		class="com.baidu.beidou.report.web.action.ListCproGroupKtAction"
+		parent="baseReportAction" scope="prototype">
+		<property name="userMgr" ref="userMgr"/>
+		<property name="cproPlanMgr" ref="cproPlanMgr"/>
+		<property name="cproGroupMgr" ref="cproGroupMgr"/>
+		<property name="cproKeywordMgr" ref="cproKeywordMgr"/>
+		<property name="groupPackFacade" ref="groupPackFacade"/>
+		<property name="beidouBasePath" value="${BEIDOU.BASEPATH}" />
+		<property name="cacheService">
+			<ref bean="reportCacheService"/>
+		</property>	
+	</bean>
+	
+	<bean id="listCproGroupSiKtAction"
+		class="com.baidu.beidou.report.web.action.ListCproGroupSiKtAction"
+		parent="baseReportAction" scope="prototype">
+		<property name="smartIdeaKeywordStatService" ref="smartIdeaKeywordStatService"/>
+		<property name="userMgr" ref="userMgr"/>
+		<property name="cproPlanMgr" ref="cproPlanMgr"/>
+		<property name="cproGroupMgr" ref="cproGroupMgr"/>
+		<property name="smartIdeaKeywordMgr" ref="smartIdeaKeywordMgr"/>
+		<property name="beidouBasePath" value="${BEIDOU.BASEPATH}" />
+	</bean>
+	
+	<bean id="listGroupProductAction"
+		class="com.baidu.beidou.report.web.action.ListGroupProductAction"
+		parent="baseReportAction" scope="prototype">
+		<property name="productStatService" ref="productStatService"/>
+		<property name="userMgr" ref="userMgr"/>
+		<property name="cproPlanMgr" ref="cproPlanMgr"/>
+		<property name="cproGroupMgr" ref="cproGroupMgr"/>
+		<property name="smartIdeaService" ref="smartIdeaService"/>
+		<property name="beidouBasePath" value="${BEIDOU.BASEPATH}" />
+	</bean>
+   	
+   	<bean id="listCproGroupItAction"
+		class="com.baidu.beidou.report.web.action.ListCproGroupItAction"
+		parent="baseReportAction" scope="prototype">
+		<property name="cproPlanMgr" ref="cproPlanMgr"/>
+		<property name="cproITFacade" ref="cproITFacade"/>
+		<property name="cproGroupMgr" ref="cproGroupMgr"/>
+		<property name="reportGroupMgr" ref="reportCproGroupMgr"/>
+		<property name="groupPackFacade" ref="groupPackFacade"/>
+		<property name="beidouBasePath" value="${BEIDOU.BASEPATH}" />
+		<property name="interestMgr" ref="interestMgr" />
+	</bean>
+	
+	<bean id="listCproGroupPackAction"
+			class="com.baidu.beidou.report.web.action.ListCproGroupPackAction"
+			parent="baseReportAction" scope="prototype">
+		<property name="cproPlanMgr" ref="cproPlanMgr"/>
+		<property name="cproGroupMgr" ref="cproGroupMgr"/>
+		<property name="groupPackFacade" ref="groupPackFacade"/>
+		<property name="beidouBasePath" value="${BEIDOU.BASEPATH}" />
+	</bean>
+	
+	<bean id="listCproGroupDtAction"
+		class="com.baidu.beidou.report.web.action.ListCproGroupDtAction"
+		parent="baseReportAction" scope="prototype">
+		<property name="cproPlanMgr" ref="cproPlanMgr"/>
+		<property name="cproGroupMgr" ref="cproGroupMgr"/>
+		<property name="reportCproGroupMgr" ref="reportCproGroupMgr"/>
+	</bean>
+	
+	<bean id="listGroupAppAction"
+		class="com.baidu.beidou.report.web.action.ListGroupAppAction"
+		parent="baseReportAction" scope="prototype">
+		<property name="cproPlanMgr" ref="cproPlanMgr"/>
+		<property name="cproGroupMgr" ref="cproGroupMgr"/>
+		<property name="reportCproGroupMgr" ref="reportCproGroupMgr"/>
+		<property name="siteConfigMgr" ref="groupSiteConfigMgr"/>
+		<property name="appExcludeMgr" ref="appExcludeMgr"/>
+		<property name="userInfoMgr" ref="userInfoMgr"/>
+	</bean>
+	
+	<bean id="listGroupAtAction"
+		class="com.baidu.beidou.report.web.action.ListGroupAtAction"
+		parent="baseReportAction" scope="prototype">
+		<property name="cproPlanMgr" ref="cproPlanMgr"/>
+		<property name="cproGroupMgr" ref="cproGroupMgr"/>
+		<property name="reportCproGroupMgr" ref="reportCproGroupMgr"/>
+		<property name="userInfoMgr" ref="userInfoMgr"/>
+		<property name="irFacade" ref="atLeftIrFacade"/>
+		<property name="atLeftGroupService" ref="atLeftGroupService"/>
+		<property name="beidouBasePath" value="${BEIDOU.BASEPATH}" />
+	</bean>
+	
+	<bean id="listGroupAttachAction"
+		class="com.baidu.beidou.report.web.action.ListGroupAttachAction"
+		parent="baseReportAction" scope="prototype">
+		<property name="cproPlanMgr" ref="cproPlanMgr"/>
+		<property name="cproGroupMgr" ref="cproGroupMgr"/>
+		<property name="reportCproGroupMgr" ref="reportCproGroupMgr"/>
+		<property name="userInfoMgr" ref="userInfoMgr"/>
+		<property name="attachInfoMgr" ref="attachInfoMgr"/>
+		<property name="beidouBasePath" value="${BEIDOU.BASEPATH}" />
+		<property name="groupAttachInfoMgr" ref="groupAttachInfoMgr"/>
+	</bean>
+	
+	<bean id="listGroupSublinkAction"
+		class="com.baidu.beidou.report.web.action.ListGroupSublinkAction"
+		parent="baseReportAction" scope="prototype">
+		<property name="cproPlanMgr" ref="cproPlanMgr"/>
+		<property name="cproGroupMgr" ref="cproGroupMgr"/>
+		<property name="reportCproGroupMgr" ref="reportCproGroupMgr"/>
+		<property name="userInfoMgr" ref="userInfoMgr"/>
+		<property name="beidouBasePath" value="${BEIDOU.BASEPATH}" />
+	</bean>
+	
+	<bean id="listPlanDeviceAction"
+		class="com.baidu.beidou.report.web.action.ListPlanDeviceAction"
+		parent="baseReportAction" scope="prototype">
+		<property name="reportCproPlanMgr" ref="reportCproPlanMgr"/>		
+		<property name="cproPlanMgr" ref="cproPlanMgr"/>
+	</bean>
+	
+	<bean id="listCproRegionAction"
+		class="com.baidu.beidou.report.web.action.ListCproRegionAction"
+		parent="baseReportAction" scope="prototype">
+		<property name="cproPlanMgr" ref="cproPlanMgr"/>
+		<property name="cproGroupMgr" ref="cproGroupMgr"/>
+		<property name="reportCproGroupMgr" ref="reportCproGroupMgr"/>
+	</bean>
+	
+	<bean id="listCproAudiencection"
+		class="com.baidu.beidou.report.web.action.ListCproAudiencection"
+		parent="baseReportAction" scope="prototype">
+		<property name="audienceAnalyFacade" ref="audienceAnalyFacade"/>
+		<property name="interestMgr" ref="interestMgr"/>
+	</bean>
+	
+	<bean id="listGroupPackDetailAction"
+			class="com.baidu.beidou.report.web.action.ListGroupPackDetailAction"
+			parent="baseReportAction" scope="prototype">
+		<property name="cproPlanMgr" ref="cproPlanMgr"/>
+		<property name="cproITFacade" ref="cproITFacade"/>
+		<property name="cproGroupMgr" ref="cproGroupMgr"/>
+		<property name="cproKeywordMgr" ref="cproKeywordMgr"/>
+		<property name="groupPackFacade" ref="groupPackFacade"/>
+		<property name="groupPackMgr" ref="groupPackMgr"/>
+		<property name="beidouBasePath" value="${BEIDOU.BASEPATH}" />
+	</bean>
+	
+	<bean id="listReportByDayAction"
+		class="com.baidu.beidou.report.web.action.ListCproReportByDayAction"
+		parent="baseReportAction" scope="prototype">
+		<property name="cproPlanMgr" ref="cproPlanMgr"/>
+		<property name="cproGroupMgr" ref="cproGroupMgr"/>
+		<property name="reportCproPlanMgr" ref="reportCproPlanMgr"/>
+		<property name="reportCproGroupMgr" ref="reportCproGroupMgr"/>
+	</bean>
+	<!-- add by linan 登录成功后返回消费和税费数据-->
+	<bean id="todayTaxStatAction" class="com.baidu.beidou.report.web.action.TodayTaxStatAction" scope="prototype">
+	</bean>
+</beans>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN"
+			  "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+
+
+<!--
+	- Application context definition for Petclinic on Hibernate.
+-->
+<beans>
+	<import resource="classpath*:/applicationContext-core-jms.xml"/>
+	<import resource="applicationContext-hibernate.xml" />
+	<import resource="applicationContext-config.xml" />
+	<import resource="applicationContext-quartz.xml" />
+	<import resource="applicationContext-rpc.xml" />
+	<import resource="classpath*:/applicationContext-core.xml" />
+	
+	
+	<import resource="classpath:/com/baidu/beidou/report/applicationContext.xml" />
+	<import resource="classpath:/com/baidu/beidou/user/applicationContext.xml" />
+	<import resource="classpath:/com/baidu/beidou/system/applicationContext.xml" />
+	
+	<!-- 指定获取数据源的Interceptor -->
+	<bean id="report_addbMultiDataSourceInterceptor" parent="addbMultiDataSourceInterceptor"
+		class="com.baidu.beidou.multidatabase.datasource.MultiDataSourceInterceptor">
+	</bean>
+	
+	<bean id="report_addbMultiDataSourceProxy" parent="addbMultiDataSourceProxy"
+		class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">
+		<property name="beanNames">
+			<list merge="true">
+				<!-- 需要使用读写分类的bean名称，如果不在dynamicDataSourceInterceptor中指定的通配符中，还需要配置方法名。-->
+				<value>reportCproPlanMgr</value>
+				<value>reportCproGroupMgr</value>
+				<value>reportCproUnitMgr</value>
+			</list>
+		</property>
+		<property name="interceptorNames">
+			<list>
+				<value>report_addbMultiDataSourceInterceptor</value>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="report_xdbMultiDataSourceInterceptor" parent="xdbMultiDataSourceInterceptor"
+		class="com.baidu.beidou.multidatabase.datasource.MultiDataSourceInterceptor">
+	</bean>
+	
+	<bean id="report_xdbMultiDataSourceProxy"
+		class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">
+		<property name="beanNames">
+			<list>
+				<value>reportCacheService</value>
+			</list>
+		</property>
+		<property name="interceptorNames">
+			<list>
+				<!-- 指定获取数据源的Interceptor -->
+				<value>report_xdbMultiDataSourceInterceptor</value>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="periodReportApi" class="com.baidu.beidou.navi.client.NaviProxyFactoryBean"> 
+		<property name="zkNodePath"> 
+			<value>${ZK_WATCH_P_REPORT_NAMESPACE_PATH}</value> 
+		</property> 
+		<property name="directCallServers">
+			<value>pr.beidou.baidu.com</value>
+		</property>
+		<property name="serviceInterface"> 
+			<value>com.baidu.beidou.period.api.PeriodReportAPI</value> 
+		</property> 
+	</bean>
+	
+	<!-- navi rpc listener -->
+	<bean class="com.baidu.beidou.navi.client.NaviRpcServerListListener">
+	</bean>
+</beans>
